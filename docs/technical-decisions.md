@@ -193,3 +193,21 @@ Issue `#7` needs local authentication and role mapping. Using the standard brows
 - Use an app-managed password exchange shortcut: rejected because it is less representative of a real browser login boundary and was unnecessary once the local OIDC flow was wired.
 
 ---
+
+## TD-014 Keep the MVP domain model simple and separate only the API contracts
+**Decision**
+Keep the current EF Core entities as the MVP domain baseline, but introduce separate versioned request/response contracts for the HTTP API.
+
+**Why**
+Issue `#8` needs a coherent model and contract baseline with validation, but a heavier domain layer would add ceremony before the CRUD workflow is implemented. Separating the transport contracts now gives versionable API boundaries without forcing a larger architectural split yet.
+
+**Impact**
+- HTTP contracts can evolve independently from the persistence entities.
+- Validation rules are centralized for request handling instead of leaking through EF/database errors.
+- The current codebase stays simple enough for a sample assignment while still showing deliberate API design.
+
+**Rejected alternatives**
+- Reuse EF entities directly as API contracts: rejected because it couples the wire format to persistence too early.
+- Introduce a richer DDD-style domain layer immediately: rejected because the current scope does not yet justify the extra abstraction.
+
+---

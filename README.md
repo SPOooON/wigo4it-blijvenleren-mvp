@@ -80,6 +80,9 @@ Useful endpoints after startup:
 - app landing page: `http://localhost:8080/`
 - app health: `http://localhost:8080/api/health`
 - dependency probe: `http://localhost:8080/api/health/dependencies`
+- versioned list route: `GET http://localhost:8080/api/v1/learning-resources`
+- versioned detail route: `GET http://localhost:8080/api/v1/learning-resources/{id}`
+- versioned create route: `POST http://localhost:8080/api/v1/learning-resources`
 - persistence smoke path: `POST http://localhost:8080/api/health/persistence-smoke`
 - demo data reseed path: `POST http://localhost:8080/api/demo/seed-data?reset=true`
 - current-user route: `GET http://localhost:8080/api/auth/me`
@@ -119,6 +122,12 @@ Issue `#7` adds the first authentication slice:
 - browser login through the app against the local identity provider
 - protected routes and role-gated API endpoints
 - bearer-token validation for API access
+
+Issue `#8` adds the first domain-contract slice:
+- versioned request/response contracts under `Contracts/V1`
+- list and detail responses for learning resources and comments
+- an internal-only create route with basic validation errors
+- mapping and validation tests for the new contract baseline
 
 ### Database migration workflow
 
@@ -174,6 +183,15 @@ curl "http://localhost:8080/api/auth/me" -H "Authorization: Bearer <access_token
 API docs note:
 - interactive API docs are deferred to follow-up issue `#20`
 - for now, use the documented curl examples or your preferred HTTP client against the local endpoints
+
+Learning-resource create example:
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/learning-resources" ^
+  -H "Authorization: Bearer <internal_access_token>" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"title\":\"Intro to REST APIs\",\"description\":\"Short MVP sample resource.\",\"url\":\"https://example.com/rest-api\"}"
+```
 
 ### Demo data workflow
 

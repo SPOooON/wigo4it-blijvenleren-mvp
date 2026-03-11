@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using System.Net.Sockets;
 using BlijvenLeren.App.Configuration;
+using BlijvenLeren.App.Contracts.V1;
 using BlijvenLeren.App.Data;
 using BlijvenLeren.App.Data.Entities;
+using BlijvenLeren.App.Features.LearningResources;
 using BlijvenLeren.App.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -227,6 +229,54 @@ app.MapGet(
         });
     })
     .WithSummary("Check whether the app can reach the database and identity provider.");
+
+app.MapPost(
+    "/api/v1/learning-resources",
+    async (CreateLearningResourceRequest request, AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var errors = LearningResourceRequestValidator.Validate(request);
+        if (errors.Count > 0)
+        {
+            return Results.ValidationProblem(errors);
+        }
+
+        var resource = LearningResourceContractMapper.ToEntity(request, DateTimeOffset.UtcNow);
+        dbContext.LearningResources.Add(resource);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Created($"/api/v1/learning-resources/{resource.Id}", LearningResourceContractMapper.ToDetailResponse(resource));
+    })
+    .RequireAuthorization("InternalUser")
+    .WithSummary("Create a learning resource with MVP validation rules.");
+
+app.MapGet(
+    "/api/v1/learning-resources",
+    async (AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var resources = await dbContext.LearningResources
+            .AsNoTracking()
+            .Include(resource => resource.Comments)
+            .OrderBy(resource => resource.Title)
+            .ToListAsync(cancellationToken);
+
+        return Results.Ok(resources.Select(LearningResourceContractMapper.ToListItemResponse));
+    })
+    .WithSummary("List learning resources using the versioned API contract.");
+
+app.MapGet(
+    "/api/v1/learning-resources/{id:guid}",
+    async (Guid id, AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var resource = await dbContext.LearningResources
+            .AsNoTracking()
+            .Include(resource => resource.Comments)
+            .SingleOrDefaultAsync(resource => resource.Id == id, cancellationToken);
+
+        return resource is null
+            ? Results.NotFound()
+            : Results.Ok(LearningResourceContractMapper.ToDetailResponse(resource));
+    })
+    .WithSummary("Get one learning resource with its comments using the versioned API contract.");
 
 app.MapPost(
     "/api/health/persistence-smoke",
