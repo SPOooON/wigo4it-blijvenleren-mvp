@@ -20,8 +20,7 @@ The original brief is intentionally open-ended and expects pragmatic choices rat
 ## What is included
 
 - .NET application code
-- API for the main use cases
-- Web application for the main use cases
+- Combined browser UI and API in one ASP.NET Core app for the MVP
 - Persistent database
 - Identity provider for authentication
 - Containerized local runtime
@@ -42,15 +41,32 @@ See `docs/scope-and-assumptions.md` for details.
 
 ### Prerequisites
 
-- Docker Desktop
-- .NET SDK
-- Optional: `just` or `make`
+- .NET SDK 10
+- Docker Desktop for later container/runtime work
 
 ### Run locally
 
 ```bash
-docker compose up --build
+dotnet run --no-launch-profile --project src/BlijvenLeren.App/BlijvenLeren.App.csproj --urls http://127.0.0.1:5078
 ```
+
+Then open:
+- `http://127.0.0.1:5078/` for the placeholder browser page
+- `http://127.0.0.1:5078/api/health` for the placeholder API health endpoint
+
+You can also build the current solution with:
+
+```bash
+dotnet build BlijvenLeren.sln
+```
+
+## Current bootstrap scope
+
+Issue `#4` establishes a runnable starting point rather than full feature coverage. The current implementation:
+- uses one ASP.NET Core project to host both Razor Pages and minimal API endpoints
+- provides a placeholder landing page for the browser experience
+- exposes a placeholder health endpoint for API connectivity checks
+- intentionally leaves domain logic, persistence, authentication and containers for follow-up issues
 
 ## Why Terraform is not included in this MVP
 

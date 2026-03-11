@@ -101,3 +101,20 @@ Reviewers need transparent, auditable change history and rationale that is easy 
 - Changes are grouped into focused PRs with explicit summaries.
 - Design trade-offs are visible both in commit history and PR discussion.
 - Local work remains reproducible, while review happens in GitHub.
+
+---
+
+## TD-009 Use one ASP.NET Core app for browser and API bootstrap
+**Decision**
+Bootstrap the solution with one ASP.NET Core app that serves both the browser UI and the initial HTTP API endpoint.
+
+**Why**
+Issue `#4` needs a runnable skeleton, but a separate web and API project split adds ceremony without improving the sample app at the current scale.
+
+**Impact**
+- The repository gets a single runnable entry point for both browser and API access.
+- Setup and review stay simpler during early implementation.
+- If later issues introduce scaling, deployment or ownership concerns, the app can still be split into separate projects.
+
+**Rejected alternatives**
+- Start with separate web and API projects immediately: rejected because it adds structure before there is enough behavior to justify it in this MVP.

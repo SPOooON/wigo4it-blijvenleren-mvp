@@ -50,6 +50,7 @@ terraform.tfplan
 # Local tooling
 ################################
 
+.dotnet/
 .idea/
 *.swp
 
