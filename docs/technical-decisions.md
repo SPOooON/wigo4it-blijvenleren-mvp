@@ -38,13 +38,15 @@ Simple querying, clear schema and reliable persistence.
 
 ## TD-004 Use a local identity provider
 **Decision**
-Use a local IDP for authentication in the demo environment.
+Use a local IDP for authentication in the demo environment, and prefer brokered social login for external users when provider credentials are available.
 
 **Why**
-The brief requires login and prefers social login, but the assignment does not require full external identity integration.
+The brief requires login and prefers social login. Keycloak keeps the MVP authentication model local and reviewable, while still allowing social providers to be wired in without changing the app's role model.
 
 **Impact**
-Demonstrates auth architecture without over-investing in third-party setup.
+- Demonstrates auth architecture without moving core authorization logic into an external provider.
+- Keeps the app's authorization model centered on `internal-user` and `external-contributor`.
+- Allows the repo to ship broker placeholders while leaving real provider credentials out of source control.
 
 ---
 
@@ -177,13 +179,15 @@ Issue `#18` asks for predictable demo data aligned with the MVP runtime. Reusing
 
 ## TD-013 Use Keycloak realm import plus OIDC code flow for MVP authentication
 **Decision**
-Use a local Keycloak realm import for users and roles, and authenticate browser users through the OIDC authorization-code flow while also validating bearer tokens from the same IDP.
+Use a local Keycloak realm import for users, roles, and placeholder social brokers, and authenticate browser users through the OIDC authorization-code flow while also validating bearer tokens from the same IDP.
 
 **Why**
-Issue `#7` needs local authentication and role mapping. Using the standard browser-oriented OIDC flow keeps the MVP aligned with expected identity boundaries while still staying small enough for a local demo runtime.
+Issue `#7` needs local authentication and role mapping, and issue `#45` extends that setup toward the brief's preferred social-login direction. Using the standard browser-oriented OIDC flow keeps the MVP aligned with expected identity boundaries while still staying small enough for a local demo runtime.
 
 **Impact**
 - The compose runtime can start with ready-to-use accounts and roles.
+- The local Keycloak realm can expose placeholder GitHub and Google brokers without storing real provider secrets in the repo.
+- Brokered social users can map to the existing `external-contributor` role instead of introducing a second external-user model.
 - Reviewers can test protected browser behavior through a normal identity-provider redirect flow.
 - API endpoints can still validate real bearer tokens issued by the local identity provider.
 - The runtime needs a small backchannel-host rewrite so the containerized app can talk to the host-exposed Keycloak authority while browsers still use `localhost`.
@@ -191,6 +195,7 @@ Issue `#7` needs local authentication and role mapping. Using the standard brows
 **Rejected alternatives**
 - Delay authentication until CRUD features exist: rejected because the assignment explicitly requires login and roles.
 - Use an app-managed password exchange shortcut: rejected because it is less representative of a real browser login boundary and was unnecessary once the local OIDC flow was wired.
+- Store real social-provider credentials in the repo: rejected because it would put secrets into source control for a demo-only convenience.
 
 ---
 

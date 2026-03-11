@@ -12,13 +12,9 @@ public static class AuthEndpointRouteBuilderExtensions
     {
         endpoints.MapGet(
             "/account/login",
-            (string? returnUrl) =>
+            (string? returnUrl, string? provider) =>
             {
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    RedirectUri = string.IsNullOrWhiteSpace(returnUrl) ? "/protected" : returnUrl
-                };
+                var authProperties = LoginRequestBuilder.Build(returnUrl, provider);
                 return Results.Challenge(authProperties, [OpenIdConnectDefaults.AuthenticationScheme]);
             });
 

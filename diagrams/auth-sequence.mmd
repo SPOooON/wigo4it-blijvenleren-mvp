@@ -9,7 +9,8 @@ sequenceDiagram
     User->>Web: Open app
     User->>Web: Start login
     Web-->>User: Redirect to OIDC authorize endpoint
-    User->>IDP: Sign in with demo account
+    Note over User,IDP: Preferred external path uses a Keycloak social broker when configured.\nFallback demo users still exist for local review.
+    User->>IDP: Sign in with social provider or demo account
     IDP-->>Web: Authorization code callback
     Web->>IDP: Redeem code for tokens
     IDP-->>Web: Tokens with realm roles

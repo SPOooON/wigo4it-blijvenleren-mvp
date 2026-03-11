@@ -82,9 +82,24 @@
                 Login failed. Ensure the local IDP is running and try again.
             </div>
         }
-        <p><a class="btn btn-primary" href="/account/login?returnUrl=%2Fprotected">Login via local OIDC</a></p>
+        @if (Model.HasPreferredExternalIdentityProvider)
+        {
+            <p>
+                Preferred external path: <code>@Model.PreferredExternalIdentityProviderDisplayName</code> through Keycloak.
+                This broker is prewired but does not work out of the box until you replace the dummy credentials in the
+                Keycloak admin console.
+            </p>
+            <p class="d-flex flex-wrap gap-2">
+                <a class="btn btn-primary" href="@Model.SocialLoginUrl">Login via @Model.PreferredExternalIdentityProviderDisplayName</a>
+                <a class="btn btn-outline-secondary" href="@Model.DemoLoginUrl">Login via local demo account</a>
+            </p>
+        }
+        else
+        {
+            <p><a class="btn btn-primary" href="@Model.DemoLoginUrl">Login via local OIDC</a></p>
+        }
         <p class="mt-3 mb-0">
-            Test accounts: <code>internal.demo / Passw0rd!</code> and <code>external.demo / Passw0rd!</code>
+            Demo accounts: <code>internal.demo / Passw0rd!</code> and fallback external user <code>external.demo / Passw0rd!</code>
         </p>
     }
 </section>
@@ -93,7 +108,7 @@
     <h2 class="h4">Suggested review path</h2>
     <ol class="mb-0">
         <li>Open <a asp-page="/LearningResources/Index"><code>/LearningResources</code></a> and inspect a seeded resource.</li>
-        <li>Sign in as <code>external.demo</code> and add a comment from a resource details page.</li>
+        <li>Sign in through the preferred social path if you configured it in Keycloak; otherwise use <code>external.demo</code> and add a comment.</li>
         <li>Sign in as <code>internal.demo</code> and open <a asp-page="/Moderation/Comments"><code>/Moderation/Comments</code></a>.</li>
         <li>Approve the pending comment and confirm it appears on the resource details page.</li>
         <li>Open <a href="/docs"><code>/docs</code></a> to inspect or call the protected API routes.</li>

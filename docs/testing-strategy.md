@@ -56,6 +56,7 @@ Issue `#39` hosted validation:
 - The browser coverage is server-rendered Razor Pages exercised through HTTP, not full browser automation.
 - This repo intentionally does not add a second UI-test framework yet because the current UI is still simple server-rendered pages and the assignment favors pragmatic scope.
 - The OIDC login redirect against local Keycloak is not part of the automated suite yet; it is still verified manually in the compose runtime.
+- The prewired GitHub and Google broker flows are also manual-only because they depend on real provider credentials entered into Keycloak outside source control.
 - The hosted CI path does not yet run a compose-level smoke test.
 
 ## Follow-up direction

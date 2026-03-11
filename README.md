@@ -54,7 +54,14 @@ Compose brings up:
 
 Demo accounts:
 - internal user: `internal.demo / Passw0rd!`
-- external contributor: `external.demo / Passw0rd!`
+- fallback external contributor: `external.demo / Passw0rd!`
+
+Social login note:
+- Keycloak now includes placeholder `GitHub` and `Google` social providers
+- `GitHub` is the preferred external-user path in the app when you want a brokered login review
+- these providers do not work out of the box because the checked-in realm import uses dummy client credentials
+- to make them work, open the Keycloak admin console at `http://localhost:8081/`, sign in with `admin / admin`, open the `blijvenleren` realm, go to `Identity providers`, and replace the dummy client ID and client secret values
+- until you do that, use `external.demo` as the fallback external reviewer account
 
 If you want a guided review after startup, use the [reviewer walkthrough](docs/reviewer-walkthrough.md).
 
@@ -105,6 +112,7 @@ The current MVP includes:
 - one ASP.NET Core app hosting Razor Pages and minimal APIs
 - PostgreSQL persistence with compose-time migrations and demo-data seeding
 - local Keycloak-based browser sign-in and bearer-token API auth
+- prewired social-login broker placeholders in Keycloak for preferred external-user sign-in
 - learning-resource CRUD, comments, moderation, health checks, and local API docs
 
 Current intentional deferrals:
@@ -119,6 +127,7 @@ See the [scope and assumptions](docs/scope-and-assumptions.md) and [backlog](doc
 - If `docker compose up --build` fails on image pulls, retry after Docker Desktop is fully ready.
 - If ports `8080`, `8081`, or `5432` are already in use, adjust the local port mappings in `compose.yaml`.
 - If login fails immediately after startup, wait for the Keycloak realm import to finish and retry.
+- If `GitHub` or `Google` login fails immediately, check the Keycloak `Identity providers` credentials first; the checked-in values are placeholders only.
 - If the app starts before `db` or `idp` is ready, recheck `http://localhost:8080/api/health/dependencies` after a few seconds.
 
 ## Review process

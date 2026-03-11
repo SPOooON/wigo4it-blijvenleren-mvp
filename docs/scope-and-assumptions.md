@@ -20,7 +20,7 @@ Deliver a pragmatic MVP that demonstrates sound engineering and DevOps practices
 - Real cloud deployment
 - Infrastructure provisioning and deployment automation (including Terraform)
 - Full production-grade HA setup
-- Full social login implementation
+- Secret-managed, out-of-the-box social login activation
 - Advanced tenant isolation
 - Full observability platform
 - Full performance validation for 500 real concurrent users
@@ -28,6 +28,7 @@ Deliver a pragmatic MVP that demonstrates sound engineering and DevOps practices
 ## Assumptions
 
 - A local/demo identity provider is acceptable to demonstrate the authentication architecture.
+- Placeholder social providers in the local Keycloak realm are acceptable as long as the repo clearly documents that real credentials must be added manually.
 - The API and web app do not need every edge case implemented to show approach and quality.
 - Deployment strategy can be documented conceptually without implementing IaC artifacts in this MVP.
 - Performance and scalability can be addressed through design notes and basic measurements, even if not fully benchmarked.

@@ -39,7 +39,7 @@ Current runtime behavior:
 - `app` exposes `/openapi/v1.json` for the generated API document and `/docs` for the local interactive docs UI
 - `app` applies pending EF Core migrations automatically in the compose runtime before serving requests
 - `app` seeds demo data automatically in the compose runtime when the database is empty
-- `idp` imports the local demo realm, roles, and test users on startup
+- `idp` imports the local demo realm, roles, test users, and placeholder social identity providers on startup
 
 Current hosted validation behavior:
 - GitHub Actions runs the main Release build-and-test path on pull requests and pushes to `main`
@@ -144,6 +144,7 @@ The current authentication setup uses:
 - two realm roles:
   - `internal-user`
   - `external-contributor`
+- prewired `GitHub` and `Google` identity brokers in Keycloak with placeholder credentials
 - OIDC authorization-code flow for browser sign-in
 - cookie auth for browser sessions
 - JWT bearer validation for protected API endpoints
@@ -166,8 +167,11 @@ Current protected boundaries:
 
 Flow notes:
 - browser requests challenge through the app and are redirected to Keycloak
+- the app can suggest a preferred external identity provider to Keycloak through `kc_idp_hint`
+- the preferred external path currently points at the `GitHub` broker when that provider is configured
 - the app completes the OIDC callback and stores an auth cookie for subsequent browser navigation
 - API routes default to bearer-token authentication semantics so protected API calls do not depend on cookie redirects
+- social-provider credentials are intentionally not valid out of the box; reviewers must replace the placeholder values in the Keycloak admin console before brokered login will succeed
 
 ## Design goals
 

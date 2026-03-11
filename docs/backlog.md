@@ -44,6 +44,14 @@ The demo data is predictable and useful, but still optimized for one shared MVP 
 Impact:
 Authentication is suitable for local review, not for production deployment.
 
+## Deferred from issue #45
+
+- Replace the dummy GitHub and Google broker credentials with environment-driven secret injection if social login moves beyond local review.
+- Add automated compose-level verification for brokered social login only if the runtime can securely access non-demo provider credentials.
+- Consider additional social providers if the assignment scope expands beyond the current reviewer-focused flow.
+Impact:
+Social login is prewired in Keycloak and documented, but real provider activation still requires manual admin-console setup.
+
 ## Deferred from issue #20
 
 - Add richer endpoint descriptions, examples, and tags as the API surface grows.

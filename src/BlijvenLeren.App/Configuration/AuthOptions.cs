@@ -12,6 +12,10 @@ public sealed class AuthOptions
 
     public string ClientId { get; init; } = "blijvenleren-app";
 
+    public string? PreferredExternalIdentityProviderAlias { get; init; }
+
+    public string? PreferredExternalIdentityProviderDisplayName { get; init; }
+
     public string InternalUserRole { get; init; } = "internal-user";
 
     public string ExternalContributorRole { get; init; } = "external-contributor";
