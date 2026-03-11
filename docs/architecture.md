@@ -22,6 +22,21 @@ The solution is designed as a locally runnable MVP with the following building b
 - `db`: persistent relational database
 - `idp`: authentication and identity management
 
+## Local container runtime
+
+`compose.yaml` defines the current local runtime with these services:
+
+- `app`: built from `src/BlijvenLeren.App/Dockerfile`, exposed on host port `8080`
+- `db`: PostgreSQL 16, exposed on host port `5432`
+- `idp`: Keycloak in development mode, exposed on host port `8081`
+
+Current runtime behavior:
+- browser traffic goes to `app`
+- browser and future client-side API calls terminate in the same `app` service
+- `app` can reach `db` through the compose network name `db`
+- `app` can reach `idp` through the compose network name `idp`
+- `app` exposes `/api/health/dependencies` to show whether those dependencies are reachable from inside the runtime
+
 ## Current project structure
 
 The runnable application code currently lives in:
@@ -69,6 +84,18 @@ Impact:
 - Reviewers can run one process to see both surfaces.
 - A later split remains possible if the application grows or deployment concerns become stricter.
 - Architecture documentation must explicitly record that this is an MVP simplification rather than a final scaling choice.
+
+## Compose scope trade-off
+
+The original container runtime issue described separate `web` and `api` services. The implemented compose runtime keeps a single `app` service instead.
+
+Reasoning:
+- The current application is still a combined ASP.NET Core app.
+- Splitting the container topology before the code splits would add operational structure that the application does not yet need.
+
+Impact:
+- The compose runtime matches the implementation rather than the earlier aspirational architecture wording.
+- Future issues can introduce a separate `web` and `api` runtime if the application is intentionally split later.
 
 ## Diagrams
 

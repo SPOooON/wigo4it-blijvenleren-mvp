@@ -14,3 +14,17 @@
         <code>/api/health</code> so later vertical slices can build on a runnable foundation.
     </p>
 </section>
+
+<section class="pb-4">
+    <h2 class="h4">Container runtime</h2>
+    <p>
+        Issue <code>#5</code> adds a Docker Compose runtime with one application container plus local database and
+        identity-provider services.
+    </p>
+    <ul>
+        <li>Application: <code>@Model.AppBaseUrl</code></li>
+        <li>Database host: <code>@Model.DatabaseHost:@Model.DatabasePort</code></li>
+        <li>Identity provider: <code>@Model.IdentityProviderAuthority</code></li>
+        <li>Dependency probe: <code>@Model.AppBaseUrl/api/health/dependencies</code></li>
+    </ul>
+</section>

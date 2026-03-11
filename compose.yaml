@@ -1,0 +1,43 @@
+name: blijvenleren-mvp
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: src/BlijvenLeren.App/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Runtime__Database__Host: db
+      Runtime__Database__Port: 5432
+      Runtime__IdentityProvider__Authority: http://idp:8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - idp
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: blijvenleren
+      POSTGRES_USER: blijvenleren
+      POSTGRES_PASSWORD: blijvenleren
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  idp:
+    image: quay.io/keycloak/keycloak:26.1.4
+    command:
+      - start-dev
+      - --http-port=8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
+
+volumes:
+  postgres-data:
