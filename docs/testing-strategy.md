@@ -62,5 +62,6 @@ Issue `#12` suite formalization:
 ## Review traceability
 
 - Requirement coverage lives in `docs/functional-requirements.md`.
+- Main code and test entry points for each implemented slice live in `docs/traceability-map.md`.
 - Security-sensitive behavior under test is summarized in `docs/security.md`.
 - Remaining testing gaps are tracked in `docs/backlog.md`.

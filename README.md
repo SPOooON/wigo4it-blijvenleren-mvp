@@ -22,6 +22,7 @@ The original brief is intentionally open-ended and expects pragmatic choices rat
 If you want the fastest walkthrough of what is built versus deferred, start here:
 - [Reviewer walkthrough](docs/reviewer-walkthrough.md) for a short guided demo path through the MVP
 - [Functional requirements](docs/functional-requirements.md) for requirement-to-implementation traceability
+- [Traceability map](docs/traceability-map.md) for where to find the main code and tests behind each implemented slice
 - [Architecture](docs/architecture.md) for the current runtime, auth, and moderation design
 - [Testing strategy](docs/testing-strategy.md) for what is covered automatically and what is still manual
 - [Security](docs/security.md) for demo shortcuts and active safeguards
