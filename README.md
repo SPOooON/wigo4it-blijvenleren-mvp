@@ -75,6 +75,7 @@ Useful endpoints after startup:
 - app landing page: `http://localhost:8080/`
 - app health: `http://localhost:8080/api/health`
 - dependency probe: `http://localhost:8080/api/health/dependencies`
+- persistence smoke path: `POST http://localhost:8080/api/health/persistence-smoke`
 - Keycloak admin console: `http://localhost:8081/` with `admin` / `admin`
 
 ## Current bootstrap scope
@@ -91,11 +92,35 @@ Issue `#5` adds the first container runtime around that bootstrap:
 - `idp` provides a local Keycloak instance for later authentication work
 - the application exposes a dependency probe so container-network reachability is visible during review
 
+Issue `#6` adds the first persistence slice:
+- EF Core with PostgreSQL for the initial relational schema
+- tables for learning resources and moderation-ready comments
+- an initial migration under `src/BlijvenLeren.App/Data/Migrations`
+- a persistence smoke endpoint that writes and reads temporary data inside a transaction
+
+### Database migration workflow
+
+Restore the local EF tool:
+
+```bash
+dotnet tool restore
+```
+
+Apply the migration from a clean local database:
+
+```bash
+dotnet ef database update --configuration Release --project src/BlijvenLeren.App/BlijvenLeren.App.csproj --startup-project src/BlijvenLeren.App/BlijvenLeren.App.csproj
+```
+
+Compose note:
+- `compose.yaml` sets `Runtime__Database__ApplyMigrationsOnStartup=true` for the `app` service, so the container runtime applies pending migrations automatically against the local PostgreSQL instance.
+
 ### Container troubleshooting
 
 - If `docker compose up --build` fails on image pulls, retry after Docker Desktop finishes starting and registry access is available.
 - If port `8080`, `8081`, or `5432` is already in use, stop the conflicting service or change the port mapping in `compose.yaml`.
 - If the app starts before `db` or `idp` is fully ready, refresh `http://localhost:8080/api/health/dependencies` after a few seconds. Full healthchecks are deferred follow-up work.
+- If you are running the app outside Docker and do not want startup migrations, leave `Runtime__Database__ApplyMigrationsOnStartup` unset or `false`.
 
 ## Why Terraform is not included in this MVP
 

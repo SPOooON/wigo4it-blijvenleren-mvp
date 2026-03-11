@@ -136,3 +136,21 @@ The repository needs a single-command runtime that reflects the documented conta
 **Rejected alternatives**
 - Force separate `web` and `api` containers immediately: rejected because the codebase still ships one application artifact.
 - Delay container runtime work until persistence and authentication are implemented: rejected because local reproducibility is a stated architecture goal.
+
+---
+
+## TD-011 Use EF Core migrations for the initial PostgreSQL schema
+**Decision**
+Use EF Core with the Npgsql provider and store the initial schema as code-first migrations in the application project.
+
+**Why**
+Issue `#6` needs a reviewable relational schema plus a repeatable migration workflow. EF Core keeps the schema close to the application model and makes later schema changes easier to audit in pull requests.
+
+**Impact**
+- Schema changes are represented as checked-in migration files instead of ad hoc SQL only.
+- The application can apply migrations automatically in the compose runtime for local demo convenience.
+- A local `dotnet-ef` tool manifest is now part of the repo for repeatable migration commands.
+
+**Rejected alternatives**
+- Hand-write raw SQL migrations only: rejected because it adds manual mapping overhead at this stage without improving reviewer clarity.
+- Delay ORM selection until CRUD features are implemented: rejected because the current issue explicitly requires a schema and migration workflow now.
