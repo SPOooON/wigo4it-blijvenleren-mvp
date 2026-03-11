@@ -8,6 +8,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__BlijvenLeren: Host=db;Port=5432;Database=blijvenleren;Username=blijvenleren;Password=blijvenleren
+      Runtime__Database__ApplyMigrationsOnStartup: true
       Runtime__Database__Host: db
       Runtime__Database__Port: 5432
       Runtime__IdentityProvider__Authority: http://idp:8080

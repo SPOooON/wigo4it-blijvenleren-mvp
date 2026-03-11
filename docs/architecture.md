@@ -36,6 +36,7 @@ Current runtime behavior:
 - `app` can reach `db` through the compose network name `db`
 - `app` can reach `idp` through the compose network name `idp`
 - `app` exposes `/api/health/dependencies` to show whether those dependencies are reachable from inside the runtime
+- `app` applies pending EF Core migrations automatically in the compose runtime before serving requests
 
 ## Current project structure
 
@@ -49,6 +50,22 @@ Current bootstrap behavior:
 - `/api/health` serves a placeholder API health response
 
 This keeps the startup slice small while still demonstrating both browser and API access paths.
+
+## Data layer
+
+The current persistence implementation uses:
+
+- EF Core in the same ASP.NET Core app
+- PostgreSQL as the relational store
+- one `learning_resources` table for the main domain entity
+- one `comments` table with explicit moderation state values
+- an initial migration in `src/BlijvenLeren.App/Data/Migrations`
+
+Schema notes:
+- comments belong to a learning resource through a required foreign key
+- comment moderation is stored explicitly as `Pending`, `Approved`, or `Rejected`
+- comment author type is stored explicitly as `Internal` or `External`
+- the first index targets `(LearningResourceId, Status)` to support resource detail and moderation queries
 
 ## Design goals
 

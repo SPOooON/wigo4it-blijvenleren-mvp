@@ -12,3 +12,9 @@
 - Add Docker Compose profiles for a faster inner-loop setup once more services exist.
 - Add explicit healthchecks and readiness ordering for all services instead of relying on startup timing.
 - Replace the Keycloak development-mode defaults with stronger local configuration once the authentication flow is implemented.
+
+## Deferred from issue #6
+
+- Add seed data for a richer local demo once the CRUD flow exists.
+- Add more targeted indexes after the real list and moderation query patterns are implemented.
+- Split the persistence smoke path into automated integration tests once issue `#12` is implemented.
