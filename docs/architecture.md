@@ -68,6 +68,13 @@ Current comment behavior:
 - external-contributor comments are saved as `Pending`
 - normal resource detail views currently expose only approved comments
 
+Current moderation behavior:
+- internal users can review pending external comments through `GET /api/v1/comments/pending`
+- the browser UI exposes the same queue at `/Moderation/Comments`
+- moderation actions go through `POST /api/v1/comments/{id}/moderation` or the browser approve/reject forms
+- only pending external comments can transition to `Approved` or `Rejected`
+- moderation timestamps are recorded when an internal user makes the decision
+
 ## Data layer
 
 The current persistence implementation uses:
@@ -129,12 +136,15 @@ Current protected boundaries:
 - `/LearningResources/Edit/{id}` requires the internal-user role
 - delete behavior on `/LearningResources/Details/{id}` requires the internal-user role
 - comment submission on `/LearningResources/Details/{id}` requires authentication
+- `/Moderation/Comments` requires the internal-user role
 - `/api/demo/seed-data` requires the internal-user role
 - `/api/auth/internal` requires the internal-user role
 - `/api/auth/external` requires the external-contributor role
 - `/api/auth/me` accepts authenticated browser sessions or bearer tokens
 - `POST`, `PUT`, and `DELETE` on `/api/v1/learning-resources` require the internal-user role
 - `POST /api/v1/learning-resources/{id}/comments` requires authentication
+- `GET /api/v1/comments/pending` requires the internal-user role
+- `POST /api/v1/comments/{id}/moderation` requires the internal-user role
 
 Flow notes:
 - browser requests challenge through the app and are redirected to Keycloak

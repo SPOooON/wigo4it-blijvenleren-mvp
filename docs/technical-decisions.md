@@ -247,3 +247,21 @@ Issue `#10` needs role-aware publication behavior plus metadata that future mode
 - Delay ownership metadata until moderation is implemented: rejected because it would create avoidable schema churn and weaker auditability.
 
 ---
+
+## TD-017 Keep moderation as an explicit internal workflow with server-side transition rules
+**Decision**
+Implement pending-comment review as an internal moderation queue with explicit approve/reject actions, and enforce state transitions on the server so only pending external comments can be moderated.
+
+**Why**
+Issue `#11` requires review and moderation flows, but the MVP still needs a simple, reviewable design. An explicit queue plus one moderation action endpoint/page keeps the behavior easy to reason about and prevents UI-only assumptions from becoming security bugs.
+
+**Impact**
+- Internal moderators now have one clear browser page and one API surface for moderation.
+- Approved comments become visible through the existing resource detail reads without duplicating comment-query logic.
+- Repeated or invalid moderation attempts return conflicts instead of silently mutating comment state.
+
+**Rejected alternatives**
+- Auto-approve external comments after submission: rejected because it bypasses the requirement entirely.
+- Allow moderation from multiple ad hoc pages first: rejected because it spreads security-sensitive state transitions across the UI too early.
+
+---

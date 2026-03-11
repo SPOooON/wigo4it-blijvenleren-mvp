@@ -47,4 +47,9 @@
 
 - Add edit and delete behavior for comments once comment ownership UX is defined.
 - Add anti-spam or rate-limit controls for comment submission.
-- Add dedicated internal review screens for pending comments in issue `#11`.
+
+## Deferred from issue #11
+
+- Add moderation audit history beyond the current status and timestamp fields.
+- Add bulk approval or rejection operations if the queue grows.
+- Add richer moderator context such as linked resource excerpts or filters once the queue becomes larger.

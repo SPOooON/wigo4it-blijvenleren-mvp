@@ -152,6 +152,37 @@ public sealed partial class BrowserResourceCrudIntegrationTests : IClassFixture<
         Assert.DoesNotContain("External browser comment", html);
     }
 
+    [Fact]
+    public async Task InternalUser_CanApprovePendingCommentThroughBrowserModerationPage()
+    {
+        using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+        client.DefaultRequestHeaders.Add("X-Test-User", "internal.demo");
+        client.DefaultRequestHeaders.Add("X-Test-Roles", "internal-user");
+
+        var moderationGet = await client.GetAsync("/Moderation/Comments");
+        var moderationHtml = await moderationGet.Content.ReadAsStringAsync();
+        Assert.Contains("Could be useful when the UI grows beyond simple forms.", moderationHtml);
+
+        var token = await ExtractRequestVerificationTokenAsync(moderationGet);
+        var approveResponse = await client.PostAsync(
+            "/Moderation/Comments?handler=Moderate&id=6b8b684d-a9d7-4b3f-8ebf-12d6736103f4",
+            BuildFormContent(
+                token,
+                new Dictionary<string, string>
+                {
+                    ["action"] = "approve"
+                }));
+
+        Assert.Equal(HttpStatusCode.Redirect, approveResponse.StatusCode);
+
+        var detailsResponse = await client.GetAsync("/LearningResources/Details/f116d693-f390-45ec-8d0b-23f6784d65b4");
+        var detailsHtml = await detailsResponse.Content.ReadAsStringAsync();
+        Assert.Contains("Could be useful when the UI grows beyond simple forms.", detailsHtml);
+    }
+
     private static FormUrlEncodedContent BuildFormContent(string requestVerificationToken, Dictionary<string, string> fields)
     {
         var formFields = new Dictionary<string, string>(fields)

@@ -1,6 +1,7 @@
 sequenceDiagram
     autonumber
     actor User
+    actor Moderator as Internal Moderator
     participant Web as Web App
     participant IDP as Identity Provider
     participant DB as Database
@@ -18,3 +19,16 @@ sequenceDiagram
     Web->>DB: Read or write resource/comment
     DB-->>Web: Result
     Web-->>User: Protected response
+
+    User->>Web: Submit external comment
+    Web->>DB: Store comment as Pending
+    DB-->>Web: Pending comment saved
+    Web-->>User: Comment accepted but hidden from public view
+
+    Moderator->>Web: Open moderation queue
+    Web->>DB: Read pending external comments
+    DB-->>Web: Pending queue
+    Moderator->>Web: Approve or reject comment
+    Web->>DB: Update comment status and moderated timestamp
+    DB-->>Web: Moderation result
+    Web-->>Moderator: Updated moderation response

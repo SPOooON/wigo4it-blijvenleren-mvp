@@ -80,6 +80,9 @@ The main functionality shall be accessible through a browser-based application.
 - FR-05 is implemented through `DELETE /api/v1/learning-resources/{id}` and the delete action on `/LearningResources/Details/{id}` for internal users.
 - FR-06 is implemented through `POST /api/v1/learning-resources/{id}/comments` and the comment form on `/LearningResources/Details/{id}` for authenticated users.
 - FR-07 is implemented by auto-approving internal-user comments on submission so they appear immediately in the normal resource detail views.
+- FR-08 is implemented by storing external comments as `Pending` and excluding them from the normal resource detail views until they are approved.
+- FR-09 is implemented through `GET /api/v1/comments/pending` and `/Moderation/Comments` for internal users.
+- FR-10 is implemented through `POST /api/v1/comments/{id}/moderation` and the approve/reject actions on `/Moderation/Comments` for internal users.
 - FR-11 is implemented through the local Keycloak-backed browser login flow and bearer-token validation.
 - FR-12 is partially implemented through the health/auth/resource API slice.
 - FR-13 is partially implemented through the current Razor Pages landing, protected, and learning-resource CRUD pages.

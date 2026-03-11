@@ -13,6 +13,9 @@ public sealed record UpdateLearningResourceRequest(
 public sealed record CreateCommentRequest(
     string? Body);
 
+public sealed record ModerateCommentRequest(
+    string? Action);
+
 public sealed record LearningResourceListItemResponse(
     Guid Id,
     string Title,
@@ -38,3 +41,14 @@ public sealed record CommentResponse(
     string Status,
     DateTimeOffset CreatedUtc,
     DateTimeOffset? ModeratedUtc);
+
+public sealed record PendingCommentResponse(
+    Guid Id,
+    Guid LearningResourceId,
+    string LearningResourceTitle,
+    string AuthorDisplayName,
+    string AuthorIdentityName,
+    string AuthorType,
+    string Body,
+    string Status,
+    DateTimeOffset CreatedUtc);

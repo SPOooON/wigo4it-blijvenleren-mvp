@@ -68,4 +68,18 @@ public static class LearningResourceContractMapper
             comment.CreatedUtc,
             comment.ModeratedUtc);
     }
+
+    public static PendingCommentResponse ToPendingCommentResponse(Comment comment)
+    {
+        return new PendingCommentResponse(
+            comment.Id,
+            comment.LearningResourceId,
+            comment.LearningResource.Title,
+            comment.AuthorDisplayName,
+            comment.AuthorIdentityName,
+            comment.AuthorType.ToString(),
+            comment.Body,
+            comment.Status.ToString(),
+            comment.CreatedUtc);
+    }
 }
