@@ -278,6 +278,53 @@ app.MapGet(
     })
     .WithSummary("Get one learning resource with its comments using the versioned API contract.");
 
+app.MapPut(
+    "/api/v1/learning-resources/{id:guid}",
+    async (Guid id, UpdateLearningResourceRequest request, AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var errors = LearningResourceRequestValidator.Validate(request);
+        if (errors.Count > 0)
+        {
+            return Results.ValidationProblem(errors);
+        }
+
+        var resource = await dbContext.LearningResources
+            .Include(learningResource => learningResource.Comments)
+            .SingleOrDefaultAsync(learningResource => learningResource.Id == id, cancellationToken);
+
+        if (resource is null)
+        {
+            return Results.NotFound();
+        }
+
+        LearningResourceContractMapper.ApplyUpdate(resource, request);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok(LearningResourceContractMapper.ToDetailResponse(resource));
+    })
+    .RequireAuthorization("InternalUser")
+    .WithSummary("Update a learning resource with MVP validation rules.");
+
+app.MapDelete(
+    "/api/v1/learning-resources/{id:guid}",
+    async (Guid id, AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var resource = await dbContext.LearningResources
+            .SingleOrDefaultAsync(learningResource => learningResource.Id == id, cancellationToken);
+
+        if (resource is null)
+        {
+            return Results.NotFound();
+        }
+
+        dbContext.LearningResources.Remove(resource);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.NoContent();
+    })
+    .RequireAuthorization("InternalUser")
+    .WithSummary("Delete a learning resource.");
+
 app.MapPost(
     "/api/health/persistence-smoke",
     async (AppDbContext dbContext, CancellationToken cancellationToken) =>

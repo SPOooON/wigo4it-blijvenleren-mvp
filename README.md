@@ -80,9 +80,15 @@ Useful endpoints after startup:
 - app landing page: `http://localhost:8080/`
 - app health: `http://localhost:8080/api/health`
 - dependency probe: `http://localhost:8080/api/health/dependencies`
+- browser resource list: `http://localhost:8080/LearningResources`
+- browser resource details: `http://localhost:8080/LearningResources/{id}`
+- browser resource create route: `http://localhost:8080/LearningResources/Create`
+- browser resource edit route: `http://localhost:8080/LearningResources/Edit/{id}`
 - versioned list route: `GET http://localhost:8080/api/v1/learning-resources`
 - versioned detail route: `GET http://localhost:8080/api/v1/learning-resources/{id}`
 - versioned create route: `POST http://localhost:8080/api/v1/learning-resources`
+- versioned update route: `PUT http://localhost:8080/api/v1/learning-resources/{id}`
+- versioned delete route: `DELETE http://localhost:8080/api/v1/learning-resources/{id}`
 - persistence smoke path: `POST http://localhost:8080/api/health/persistence-smoke`
 - demo data reseed path: `POST http://localhost:8080/api/demo/seed-data?reset=true`
 - current-user route: `GET http://localhost:8080/api/auth/me`
@@ -128,6 +134,13 @@ Issue `#8` adds the first domain-contract slice:
 - list and detail responses for learning resources and comments
 - an internal-only create route with basic validation errors
 - mapping and validation tests for the new contract baseline
+
+Issue `#9` completes the first learning-resource CRUD slice:
+- browser list and details pages for seeded learning resources
+- internal-only browser create, edit, and delete flows
+- versioned update and delete API routes alongside the existing list, detail, and create routes
+- role checks enforced consistently across browser and API paths
+- integration coverage for API and browser happy paths using an in-memory test host
 
 ### Database migration workflow
 
@@ -191,6 +204,22 @@ curl -X POST "http://localhost:8080/api/v1/learning-resources" ^
   -H "Authorization: Bearer <internal_access_token>" ^
   -H "Content-Type: application/json" ^
   -d "{\"title\":\"Intro to REST APIs\",\"description\":\"Short MVP sample resource.\",\"url\":\"https://example.com/rest-api\"}"
+```
+
+Learning-resource update example:
+
+```bash
+curl -X PUT "http://localhost:8080/api/v1/learning-resources/<resource_id>" ^
+  -H "Authorization: Bearer <internal_access_token>" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"title\":\"Updated REST APIs intro\",\"description\":\"Updated MVP sample resource.\",\"url\":\"https://example.com/rest-api-updated\"}"
+```
+
+Learning-resource delete example:
+
+```bash
+curl -X DELETE "http://localhost:8080/api/v1/learning-resources/<resource_id>" ^
+  -H "Authorization: Bearer <internal_access_token>"
 ```
 
 ### Demo data workflow

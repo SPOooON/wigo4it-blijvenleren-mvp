@@ -13,6 +13,9 @@
         It provides a basic landing page for the browser experience and a placeholder API health endpoint at
         <code>/api/health</code> so later vertical slices can build on a runnable foundation.
     </p>
+    <p>
+        The first browser CRUD slice now lives at <a asp-page="/LearningResources/Index"><code>/LearningResources</code></a>.
+    </p>
 </section>
 
 <section class="pb-4">
@@ -58,5 +61,6 @@
         <li>Identity provider: <code>@Model.IdentityProviderAuthority</code></li>
         <li>Dependency probe: <code>@Model.AppBaseUrl/api/health/dependencies</code></li>
         <li>Token validation route: <code>@Model.AppBaseUrl/api/auth/me</code></li>
+        <li>Browser CRUD route: <code>@Model.AppBaseUrl/LearningResources</code></li>
     </ul>
 </section>

@@ -5,6 +5,11 @@ public sealed record CreateLearningResourceRequest(
     string? Description,
     string? Url);
 
+public sealed record UpdateLearningResourceRequest(
+    string? Title,
+    string? Description,
+    string? Url);
+
 public sealed record LearningResourceListItemResponse(
     Guid Id,
     string Title,

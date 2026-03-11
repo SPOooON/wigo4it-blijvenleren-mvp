@@ -36,3 +36,9 @@
 - Add update/delete contracts and handlers once the internal CRUD workflow is implemented.
 - Add explicit API versioning strategy documentation once there is more than one versioned slice.
 - Revisit whether the current EF-entity-as-domain baseline should be split further once business rules become richer.
+
+## Deferred from issue #9
+
+- Add pagination, filtering, and sorting to the resource list in browser and API views.
+- Add optimistic concurrency handling for concurrent edits and deletes.
+- Add browser automation if the UI grows beyond the current server-rendered forms and navigation.

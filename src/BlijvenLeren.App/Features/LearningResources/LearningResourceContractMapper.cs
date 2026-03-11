@@ -43,6 +43,13 @@ public static class LearningResourceContractMapper
         };
     }
 
+    public static void ApplyUpdate(LearningResource resource, UpdateLearningResourceRequest request)
+    {
+        resource.Title = request.Title!.Trim();
+        resource.Description = request.Description!.Trim();
+        resource.Url = request.Url!.Trim();
+    }
+
     private static CommentResponse ToCommentResponse(Comment comment)
     {
         return new CommentResponse(
