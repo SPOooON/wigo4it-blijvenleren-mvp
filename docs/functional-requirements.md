@@ -84,7 +84,7 @@ The main functionality shall be accessible through a browser-based application.
 - FR-09 is implemented through `GET /api/v1/comments/pending` and `/Moderation/Comments` for internal users.
 - FR-10 is implemented through `POST /api/v1/comments/{id}/moderation` and the approve/reject actions on `/Moderation/Comments` for internal users.
 - FR-11 is implemented through the local Keycloak-backed browser login flow and bearer-token validation.
-- FR-12 is partially implemented through the health/auth/resource API slice.
+- FR-12 is partially implemented through the health/auth/resource/comment/moderation API slice plus local OpenAPI documentation.
 - FR-13 is partially implemented through the current Razor Pages landing, protected, and learning-resource CRUD pages.
 
 ## Traceability matrix
@@ -102,7 +102,7 @@ The main functionality shall be accessible through a browser-based application.
 | FR-09 Review pending comments | Implemented | `GET /api/v1/comments/pending`, `/Moderation/Comments` | Queue filtering and richer review context are deferred. |
 | FR-10 Approve or reject pending comments | Implemented | `POST /api/v1/comments/{id}/moderation`, browser approve/reject actions | Bulk moderation is deferred. |
 | FR-11 Authentication | Implemented | Local Keycloak OIDC login and bearer validation | Social login remains a future extension. |
-| FR-12 API access | Partially implemented | Health/auth/resource/comment/moderation endpoints | Interactive API docs and broader API completeness are deferred. |
+| FR-12 API access | Partially implemented | Health/auth/resource/comment/moderation endpoints plus `/openapi/v1.json` and `/docs` | Broader API completeness remains deferred. |
 | FR-13 Browser access | Partially implemented | Razor Pages landing, protected area, CRUD pages, moderation page | UI polish and broader flows remain deferred. |
 
 ## Notes and implementation choices
