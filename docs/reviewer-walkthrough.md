@@ -11,7 +11,13 @@ Recommended runtime:
 
 Demo accounts:
 - internal user: `internal.demo / Passw0rd!`
-- external contributor: `external.demo / Passw0rd!`
+- fallback external contributor: `external.demo / Passw0rd!`
+
+Social login setup note:
+- the local Keycloak realm includes placeholder `GitHub` and `Google` identity providers
+- they do not work out of the box because their client credentials are dummy values in the checked-in realm import
+- to activate them, open `http://localhost:8081/`, sign in with `admin / admin`, open the `blijvenleren` realm, go to `Identity providers`, and replace the dummy client ID and client secret values
+- if you do not configure that, use `external.demo` as the fallback external reviewer account
 
 Expected seeded data:
 - 3 learning resources
@@ -60,7 +66,7 @@ Goal:
 
 Steps:
 1. Sign out if needed.
-2. Sign in as `external.demo`.
+2. Sign in through the preferred social path if you configured the broker credentials in Keycloak; otherwise sign in as `external.demo`.
 3. Open any seeded learning-resource detail page.
 4. Submit a new comment.
 
@@ -110,5 +116,6 @@ Expected result:
 ## Notes
 
 - The automated suite covers the main API and Razor Pages behavior, but not the full OIDC login redirect against the local Keycloak runtime.
+- The prewired social-login brokers also remain manual-only because real provider credentials are not stored in the repo.
 - If you want a smaller automated verification step, run `dotnet test test/BlijvenLeren.App.Tests/BlijvenLeren.App.Tests.csproj -c Release --filter FullyQualifiedName~BrowserSmoke`.
 - If the local identity provider is still starting up, wait a few seconds and retry the login flow.

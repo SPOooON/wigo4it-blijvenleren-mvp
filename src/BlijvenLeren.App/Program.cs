@@ -74,6 +74,7 @@ builder.Services.AddAuthentication(options =>
         options.UsePkce = true;
         options.SaveTokens = true;
         options.GetClaimsFromUserInfoEndpoint = false;
+        options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Disable;
         if (!string.IsNullOrWhiteSpace(authOptions.MetadataAddress))
         {
             options.MetadataAddress = authOptions.MetadataAddress;
@@ -92,6 +93,11 @@ builder.Services.AddAuthentication(options =>
         options.BackchannelHttpHandler = new AuthorityRewriteHandler(authOptions.Authority, authOptions.BackchannelAuthority);
         options.Events = new OpenIdConnectEvents
         {
+            OnRedirectToIdentityProvider = context =>
+            {
+                LoginRequestBuilder.ApplyIdentityProviderHint(context.Properties, context.ProtocolMessage);
+                return Task.CompletedTask;
+            },
             OnTokenValidated = context =>
             {
                 if (context.Principal?.Identity is ClaimsIdentity identity)

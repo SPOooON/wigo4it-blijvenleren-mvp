@@ -111,14 +111,17 @@ Primary docs:
 
 Main code entry points:
 - `src/BlijvenLeren.App/Features/Auth/AuthEndpointRouteBuilderExtensions.cs`
+- `src/BlijvenLeren.App/Features/Auth/LoginRequestBuilder.cs`
 - `src/BlijvenLeren.App/Security/ClaimsPrincipalFactory.cs`
 - `src/BlijvenLeren.App/Security/AuthorityRewriteHandler.cs`
 - `src/BlijvenLeren.App/Pages/Protected.cshtml.cs`
 - `src/BlijvenLeren.App/Pages/Index.cshtml.cs`
+- `infra/keycloak/realm-import/blijvenleren-realm.json`
 
 Main automated tests:
 - `test/BlijvenLeren.App.Tests/ApiResourceCrudIntegrationTests.cs`
 - `test/BlijvenLeren.App.Tests/BrowserResourceCrudIntegrationTests.cs`
+- `test/BlijvenLeren.App.Tests/LoginRequestBuilderTests.cs`
 - `test/BlijvenLeren.App.Tests/Infrastructure/TestAuthHandler.cs`
 - `test/BlijvenLeren.App.Tests/Infrastructure/TestApplicationFactory.cs`
 
