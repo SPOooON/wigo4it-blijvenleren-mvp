@@ -11,14 +11,14 @@ The solution is designed as a locally runnable MVP with the following building b
 ## Primary flow
 
 1. User authenticates through the identity provider
-2. Web application calls API
-3. API validates identity and authorization
-4. API reads/writes learning resources and comments in the database
-5. Internal moderation flow controls visibility of external comments
+2. Browser requests and API calls both terminate in the same ASP.NET Core app
+3. The app validates identity and authorization based on route type and role requirements
+4. Razor Pages handlers and minimal API endpoints read/write learning resources and comments through the same DbContext
+5. Internal moderation rules control visibility of external comments
 
 ## Container view
 
-- `app`: browser-facing frontend and HTTP API hosted in one ASP.NET Core app for the bootstrap phase
+- `app`: browser-facing frontend and HTTP API hosted in one ASP.NET Core app for the current MVP
 - `db`: persistent relational database
 - `idp`: authentication and identity management
 
@@ -49,11 +49,11 @@ The runnable application code currently lives in:
 - `BlijvenLeren.sln`: top-level solution file for local build and future expansion
 - `test/BlijvenLeren.App.Tests`: unit and integration tests for the current learning-resource slice
 
-Current bootstrap behavior:
-- `/` serves a placeholder browser page
-- `/api/health` serves a placeholder API health response
+Current entry-point behavior:
+- `/` serves the current MVP landing page with auth and runtime guidance
+- `/api/health` serves a simple app-health response
 
-This keeps the startup slice small while still demonstrating both browser and API access paths.
+This keeps the runtime easy to review while still demonstrating both browser and API access paths.
 
 Current CRUD behavior:
 - `/LearningResources` lists the seeded learning resources in the browser
@@ -105,7 +105,7 @@ The current domain/API baseline intentionally keeps modeling straightforward:
 - EF Core entities remain the current domain model for the MVP
 - versioned transport contracts live separately under `Contracts/V1`
 - mapping and validation live in `Features/LearningResources`
-- the first versioned API slice covers list, detail, and create behavior for learning resources
+- the current versioned API slice covers list, detail, create, update, and delete behavior for learning resources plus comment and moderation endpoints
 
 This keeps the current layer count low while still separating persistence entities from external request/response contracts.
 

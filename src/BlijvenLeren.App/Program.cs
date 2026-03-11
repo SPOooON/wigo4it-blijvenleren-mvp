@@ -208,7 +208,7 @@ app.MapGet("/api/health", () => Results.Ok(new
 {
     status = "ok",
     application = "BlijvenLeren",
-    mode = "bootstrap"
+    mode = "mvp"
 }))
     .WithSummary("Return a simple application health response.");
 

@@ -60,8 +60,10 @@ dotnet run --no-launch-profile --project src/BlijvenLeren.App/BlijvenLeren.App.c
 ```
 
 Then open:
-- `http://127.0.0.1:5078/` for the placeholder browser page
-- `http://127.0.0.1:5078/api/health` for the placeholder API health endpoint
+- `http://127.0.0.1:5078/` for the MVP landing page and browser entry point
+- `http://127.0.0.1:5078/LearningResources` for the main browser learning-resource flow
+- `http://127.0.0.1:5078/api/health` for the application health endpoint
+- `http://127.0.0.1:5078/docs` for the local interactive API docs
 
 Local URL note:
 - the checked-in launch profile also uses port `5078`
@@ -129,18 +131,18 @@ Useful endpoints after startup:
 - external-only route: `GET http://localhost:8080/api/auth/external`
 - Keycloak admin console: `http://localhost:8081/` with `admin` / `admin`
 
-## Current bootstrap scope
+## Current MVP scope
 
-Issue `#4` establishes a runnable starting point rather than full feature coverage. The current implementation:
+Issue `#4` established the initial runnable starting point. The current implementation now:
 - uses one ASP.NET Core project to host both Razor Pages and minimal API endpoints
-- provides a placeholder landing page for the browser experience
-- exposes a placeholder health endpoint for API connectivity checks
-- intentionally leaves domain logic, persistence, authentication and containers for follow-up issues
+- provides a reviewer-facing landing page plus learning-resource browser flows
+- exposes health, auth, resource, comment, moderation, demo-data, and API-docs endpoints
+- keeps the combined-app structure as an MVP trade-off rather than a missing implementation step
 
-Issue `#5` adds the first container runtime around that bootstrap:
+Issue `#5` adds the local container runtime around that MVP:
 - `app` hosts both the browser UI and the API surface
-- `db` provides a PostgreSQL instance for later persistence work
-- `idp` provides a local Keycloak instance for later authentication work
+- `db` provides the PostgreSQL persistence used by the current app
+- `idp` provides the local Keycloak identity provider used by the current auth flow
 - the application exposes a dependency probe so container-network reachability is visible during review
 
 Issue `#6` adds the first persistence slice:
@@ -205,7 +207,6 @@ Current implemented requirement coverage:
 - FR-12 and FR-13 are implemented as an MVP subset rather than a fully polished product surface
 
 Current notable deferrals:
-- interactive API docs are tracked in issue `#20`
 - browser/API list ergonomics such as pagination, filtering, and sorting remain deferred
 - production hardening, richer moderation auditability, and cloud/IaC concerns remain intentionally out of MVP scope
 
