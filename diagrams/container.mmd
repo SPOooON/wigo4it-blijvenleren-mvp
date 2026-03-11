@@ -4,10 +4,10 @@ flowchart TB
     end
 
     subgraph runtime["Local Container Runtime (docker compose)"]
-        web[web\nFrontend]
-        api[api\nBackend HTTP API]
-        idp[idp\nAuthentication Provider]
-        db[(db\nRelational Database)]
+        web[web - Frontend]
+        api[api - Backend HTTP API]
+        idp[idp - Authentication Provider]
+        db[(db - Relational Database)]
     end
 
     browser -->|HTTPS| web
