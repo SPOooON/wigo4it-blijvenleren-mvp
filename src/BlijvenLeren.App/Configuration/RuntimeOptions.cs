@@ -13,6 +13,8 @@ public sealed class DatabaseOptions
 {
     public bool ApplyMigrationsOnStartup { get; init; }
 
+    public bool SeedDemoDataOnStartup { get; init; }
+
     public string Host { get; init; } = "localhost";
 
     public int Port { get; init; } = 5432;

@@ -76,6 +76,7 @@ Useful endpoints after startup:
 - app health: `http://localhost:8080/api/health`
 - dependency probe: `http://localhost:8080/api/health/dependencies`
 - persistence smoke path: `POST http://localhost:8080/api/health/persistence-smoke`
+- demo data reseed path: `POST http://localhost:8080/api/demo/seed-data?reset=true`
 - Keycloak admin console: `http://localhost:8081/` with `admin` / `admin`
 
 ## Current bootstrap scope
@@ -98,6 +99,12 @@ Issue `#6` adds the first persistence slice:
 - an initial migration under `src/BlijvenLeren.App/Data/Migrations`
 - a persistence smoke endpoint that writes and reads temporary data inside a transaction
 
+Issue `#18` adds predictable demo data:
+- three learning resources with review-friendly titles and descriptions
+- internal comments that are immediately visible
+- external comments in `Pending` and `Rejected` moderation states
+- a reseed endpoint for resetting the local walkthrough data
+
 ### Database migration workflow
 
 Restore the local EF tool:
@@ -114,6 +121,23 @@ dotnet ef database update --configuration Release --project src/BlijvenLeren.App
 
 Compose note:
 - `compose.yaml` sets `Runtime__Database__ApplyMigrationsOnStartup=true` for the `app` service, so the container runtime applies pending migrations automatically against the local PostgreSQL instance.
+- `compose.yaml` also sets `Runtime__Database__SeedDemoDataOnStartup=true`, so a clean local container runtime starts with representative review data.
+
+### Demo data workflow
+
+The container runtime seeds demo data automatically when the database is empty.
+
+To reset demo data manually:
+
+```bash
+curl -X POST "http://localhost:8080/api/demo/seed-data?reset=true"
+```
+
+Expected seeded shape:
+- 3 learning resources
+- internal comments in `Approved`
+- external comments in `Pending`
+- external comments in `Rejected`
 
 ### Container troubleshooting
 
@@ -121,6 +145,7 @@ Compose note:
 - If port `8080`, `8081`, or `5432` is already in use, stop the conflicting service or change the port mapping in `compose.yaml`.
 - If the app starts before `db` or `idp` is fully ready, refresh `http://localhost:8080/api/health/dependencies` after a few seconds. Full healthchecks are deferred follow-up work.
 - If you are running the app outside Docker and do not want startup migrations, leave `Runtime__Database__ApplyMigrationsOnStartup` unset or `false`.
+- If you are running the app outside Docker and want startup seeding, set `Runtime__Database__SeedDemoDataOnStartup=true`.
 
 ## Why Terraform is not included in this MVP
 

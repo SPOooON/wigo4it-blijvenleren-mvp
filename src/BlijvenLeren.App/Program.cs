@@ -14,12 +14,14 @@ builder.Services.Configure<RuntimeOptions>(
     builder.Configuration.GetSection(RuntimeOptions.SectionName));
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BlijvenLeren")));
+builder.Services.AddScoped<DemoDataSeeder>();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
 await ApplyDatabaseMigrationsAsync(app);
+await SeedDemoDataAsync(app);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -117,6 +119,14 @@ app.MapPost(
         });
     });
 
+app.MapPost(
+    "/api/demo/seed-data",
+    async (bool? reset, DemoDataSeeder seeder, CancellationToken cancellationToken) =>
+    {
+        var result = await seeder.SeedAsync(reset ?? false, cancellationToken);
+        return Results.Ok(result);
+    });
+
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
@@ -191,4 +201,25 @@ static async Task ApplyDatabaseMigrationsAsync(WebApplication app)
     }
 
     await dbContext.Database.MigrateAsync();
+}
+
+static async Task SeedDemoDataAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var runtimeOptions = scope.ServiceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DemoDataStartup");
+
+    if (!runtimeOptions.Database.SeedDemoDataOnStartup)
+    {
+        logger.LogInformation("Demo data seeding on startup is disabled.");
+        return;
+    }
+
+    var seeder = scope.ServiceProvider.GetRequiredService<DemoDataSeeder>();
+    var result = await seeder.SeedAsync(resetExistingData: false, CancellationToken.None);
+    logger.LogInformation(
+        "Demo data seeding completed with status {Status}. Resources: {ResourceCount}, Comments: {CommentCount}.",
+        result.Status,
+        result.ResourceCount,
+        result.CommentCount);
 }

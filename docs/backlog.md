@@ -18,3 +18,9 @@
 - Add seed data for a richer local demo once the CRUD flow exists.
 - Add more targeted indexes after the real list and moderation query patterns are implemented.
 - Split the persistence smoke path into automated integration tests once issue `#12` is implemented.
+
+## Deferred from issue #18
+
+- Add environment-specific seed sets once reviewer and developer workflows diverge.
+- Add richer personas, more comments per resource, and moderation-history examples once the UI can surface them.
+- Replace the HTTP reseed endpoint with a more role-aware or operator-only flow once authentication and authorization are implemented.
