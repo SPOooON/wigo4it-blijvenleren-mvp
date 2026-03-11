@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant Web as Web App
+    participant IDP as Identity Provider
+    participant API as API
+    participant DB as Database
+
+    User->>Web: Open app
+    Web->>IDP: Redirect to login
+    User->>IDP: Submit credentials
+    IDP-->>Web: Auth code / token response
+    Web->>API: Request with bearer token
+    API->>IDP: Validate token and claims
+    IDP-->>API: Token valid + roles
+    API->>DB: Read or write resource/comment
+    DB-->>API: Result
+    API-->>Web: Response
+    Web-->>User: Render updated view

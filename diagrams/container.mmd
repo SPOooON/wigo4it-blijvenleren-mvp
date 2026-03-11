@@ -1,0 +1,17 @@
+flowchart TB
+    subgraph user["Client"]
+        browser[Browser]
+    end
+
+    subgraph runtime["Local Container Runtime (docker compose)"]
+        web[web\nFrontend]
+        api[api\nBackend HTTP API]
+        idp[idp\nAuthentication Provider]
+        db[(db\nRelational Database)]
+    end
+
+    browser -->|HTTPS| web
+    web -->|HTTP API calls| api
+    web -->|Login / callback| idp
+    api -->|Token validation / user info| idp
+    api -->|SQL| db
