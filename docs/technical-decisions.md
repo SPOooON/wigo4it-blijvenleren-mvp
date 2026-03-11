@@ -154,3 +154,21 @@ Issue `#6` needs a reviewable relational schema plus a repeatable migration work
 **Rejected alternatives**
 - Hand-write raw SQL migrations only: rejected because it adds manual mapping overhead at this stage without improving reviewer clarity.
 - Delay ORM selection until CRUD features are implemented: rejected because the current issue explicitly requires a schema and migration workflow now.
+
+---
+
+## TD-012 Seed demo data through the application data layer
+**Decision**
+Seed review data through the application itself, using the existing DbContext and an opt-in runtime flag.
+
+**Why**
+Issue `#18` asks for predictable demo data aligned with the MVP runtime. Reusing the application data layer keeps the seeding path visible, easy to review, and consistent with the current single-app architecture.
+
+**Impact**
+- A clean compose runtime can start with representative review data automatically.
+- Demo data can be reset through a simple HTTP endpoint instead of an extra external script.
+- Seed logic stays close to the entity model and evolves with schema changes.
+
+**Rejected alternatives**
+- Maintain separate SQL seed scripts only: rejected because it duplicates model knowledge outside the app.
+- Seed unconditionally on every startup: rejected because it would overwrite manual demo changes too aggressively.

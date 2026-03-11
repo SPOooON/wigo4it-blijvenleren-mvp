@@ -37,6 +37,7 @@ Current runtime behavior:
 - `app` can reach `idp` through the compose network name `idp`
 - `app` exposes `/api/health/dependencies` to show whether those dependencies are reachable from inside the runtime
 - `app` applies pending EF Core migrations automatically in the compose runtime before serving requests
+- `app` seeds demo data automatically in the compose runtime when the database is empty
 
 ## Current project structure
 
@@ -66,6 +67,21 @@ Schema notes:
 - comment moderation is stored explicitly as `Pending`, `Approved`, or `Rejected`
 - comment author type is stored explicitly as `Internal` or `External`
 - the first index targets `(LearningResourceId, Status)` to support resource detail and moderation queries
+
+## Demo data
+
+The current demo-data approach lives inside the application runtime:
+
+- `DemoDataSeeder` inserts a small representative dataset through the same DbContext used by the app
+- startup seeding is opt-in through configuration
+- the compose runtime enables startup seeding for local review convenience
+- `POST /api/demo/seed-data?reset=true` clears existing records and reloads the demo dataset
+
+The seeded data intentionally demonstrates:
+- multiple learning resources
+- internal comments that are already approved
+- external comments awaiting moderation
+- external comments that were rejected
 
 ## Design goals
 
