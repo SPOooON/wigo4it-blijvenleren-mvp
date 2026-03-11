@@ -191,3 +191,5 @@ Issue `#7` needs local authentication and role mapping. Using the standard brows
 **Rejected alternatives**
 - Delay authentication until CRUD features exist: rejected because the assignment explicitly requires login and roles.
 - Use an app-managed password exchange shortcut: rejected because it is less representative of a real browser login boundary and was unnecessary once the local OIDC flow was wired.
+
+---

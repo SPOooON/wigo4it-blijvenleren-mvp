@@ -194,7 +194,8 @@ app.MapGet("/api/health", () => Results.Ok(new
     status = "ok",
     application = "BlijvenLeren",
     mode = "bootstrap"
-}));
+}))
+    .WithSummary("Return a simple application health response.");
 
 app.MapGet(
     "/api/health/dependencies",
@@ -224,7 +225,8 @@ app.MapGet(
                 identityProvider
             }
         });
-    });
+    })
+    .WithSummary("Check whether the app can reach the database and identity provider.");
 
 app.MapPost(
     "/api/health/persistence-smoke",
@@ -268,7 +270,8 @@ app.MapPost(
             resourceId = persisted.Id,
             commentStatuses = persisted.Comments.Select(savedComment => savedComment.Status.ToString())
         });
-    });
+    })
+    .WithSummary("Write and read temporary persistence data inside a rolled-back transaction.");
 
 app.MapPost(
     "/api/demo/seed-data",
@@ -277,7 +280,8 @@ app.MapPost(
         var result = await seeder.SeedAsync(reset ?? false, cancellationToken);
         return Results.Ok(result);
     })
-    .RequireAuthorization("InternalUser");
+    .RequireAuthorization("InternalUser")
+    .WithSummary("Seed or reseed the demo dataset. Requires the internal-user role.");
 
 app.MapGet(
     "/api/auth/me",
@@ -287,13 +291,16 @@ app.MapGet(
         username = user.Identity?.Name,
         roles = user.FindAll(ClaimTypes.Role).Select(claim => claim.Value).Distinct()
     }))
-    .RequireAuthorization();
+    .RequireAuthorization()
+    .WithSummary("Return the current authenticated user and mapped roles.");
 
 app.MapGet("/api/auth/internal", () => Results.Ok(new { status = "ok", role = "internal-user" }))
-    .RequireAuthorization("InternalUser");
+    .RequireAuthorization("InternalUser")
+    .WithSummary("Verify access for the internal-user role.");
 
 app.MapGet("/api/auth/external", () => Results.Ok(new { status = "ok", role = "external-contributor" }))
-    .RequireAuthorization("ExternalContributor");
+    .RequireAuthorization("ExternalContributor")
+    .WithSummary("Verify access for the external-contributor role.");
 
 app.MapStaticAssets();
 app.MapRazorPages()

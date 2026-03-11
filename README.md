@@ -54,6 +54,11 @@ Then open:
 - `http://127.0.0.1:5078/` for the placeholder browser page
 - `http://127.0.0.1:5078/api/health` for the placeholder API health endpoint
 
+Local URL note:
+- the checked-in launch profile also uses port `5078`
+- the compose runtime uses port `8080`
+- if you see `http://localhost:5114`, you are not on the compose-hosted app
+
 You can also build the current solution with:
 
 ```bash
@@ -165,6 +170,10 @@ Use the returned access token with:
 ```bash
 curl "http://localhost:8080/api/auth/me" -H "Authorization: Bearer <access_token>"
 ```
+
+API docs note:
+- interactive API docs are deferred to follow-up issue `#20`
+- for now, use the documented curl examples or your preferred HTTP client against the local endpoints
 
 ### Demo data workflow
 

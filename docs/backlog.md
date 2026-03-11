@@ -29,3 +29,4 @@
 
 - Tighten token validation and cookie settings for production-like environments.
 - Move committed demo credentials and realm provisioning out of the default runtime for non-demo environments.
+- Add built-in OpenAPI generation and a local interactive API docs UI in issue `#20`.
