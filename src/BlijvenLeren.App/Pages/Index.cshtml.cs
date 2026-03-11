@@ -27,11 +27,9 @@ public class IndexModel : PageModel
 
     public string LearningResourcesUrl => $"{AppBaseUrl}/LearningResources";
 
-    public string DatabaseHost => _runtimeOptions.Database.Host;
+    public string ReviewerFacingDatabaseHost => $"{Request.Host.Host}:{_runtimeOptions.Database.Port}";
 
-    public int DatabasePort => _runtimeOptions.Database.Port;
-
-    public string IdentityProviderAuthority => _runtimeOptions.IdentityProvider.Authority;
+    public string ReviewerFacingIdentityProviderAuthority => _authOptions.Authority;
 
     public string? PreferredExternalIdentityProviderAlias { get; private set; }
 
