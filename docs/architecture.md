@@ -200,6 +200,8 @@ Impact:
 
 ## Diagrams
 
+The Mermaid diagrams are intended to stay aligned with the implementation and this document.
+
 See:
 - `../diagrams/context.mmd`
 - `../diagrams/container.mmd`

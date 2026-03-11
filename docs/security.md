@@ -36,3 +36,9 @@ This MVP uses a local Keycloak instance to demonstrate authentication and role-b
 
 - Enforce stronger cookie settings and production-grade HTTPS-only behavior.
 - Move test account provisioning out of committed realm-import data for non-demo environments.
+
+## Review traceability
+
+- Authentication and authorization requirements are mapped in `docs/functional-requirements.md`.
+- Current protected boundaries are listed in `docs/architecture.md`.
+- Deferred hardening work is tracked in `docs/backlog.md`.
