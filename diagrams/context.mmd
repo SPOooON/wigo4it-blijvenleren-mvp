@@ -1,0 +1,17 @@
+flowchart LR
+    user[User]
+    ext[External Contributor]
+
+    subgraph BlijvenLeren["BlijvenLeren MVP"]
+        web[Web Application]
+        api[API]
+        idp[Identity Provider]
+        db[(Relational Database)]
+    end
+
+    user -->|Uses browser| web
+    ext -->|Uses browser| web
+    web -->|OIDC login redirect| idp
+    web -->|Authorized API calls| api
+    api -->|Validate token / roles| idp
+    api -->|Read / write resources and comments| db
