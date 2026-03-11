@@ -319,3 +319,21 @@ Issue `#20` asks for a platform-aligned API docs setup after the authentication 
 - Add a custom docs page instead of a standard UI: rejected because it would add maintenance without improving review value.
 
 ---
+
+## TD-021 Group endpoint registration by feature while keeping one app
+**Decision**
+Keep the single ASP.NET Core MVP application, but move endpoint registration out of `Program.cs` into feature-level route builder extensions.
+
+**Why**
+Issue `#33` focuses on readability rather than a broader architectural split. The app is still intentionally one deployable, but reviewers should not have to parse the entire API surface from one large composition root.
+
+**Impact**
+- `Program.cs` stays focused on configuration, middleware, startup tasks, and top-level wiring.
+- API route registration is easier to review by feature: auth, runtime, learning resources, and comments.
+- The change improves traceability without introducing a heavier application-layer abstraction.
+
+**Rejected alternatives**
+- Keep all endpoints in `Program.cs`: rejected because it made the current slices harder to scan than necessary.
+- Introduce a richer command/handler architecture now: rejected because it would add more abstraction than the current MVP needs.
+
+---

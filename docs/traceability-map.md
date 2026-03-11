@@ -18,7 +18,7 @@ Primary docs:
 - `docs/architecture.md`
 
 Main code entry points:
-- `src/BlijvenLeren.App/Program.cs`
+- `src/BlijvenLeren.App/Features/LearningResources/LearningResourceEndpointRouteBuilderExtensions.cs`
 - `src/BlijvenLeren.App/Pages/LearningResources/Index.cshtml.cs`
 - `src/BlijvenLeren.App/Pages/LearningResources/Details.cshtml.cs`
 - `src/BlijvenLeren.App/Features/LearningResources/LearningResourceContractMapper.cs`
@@ -42,7 +42,7 @@ Primary docs:
 - `docs/security.md`
 
 Main code entry points:
-- `src/BlijvenLeren.App/Program.cs`
+- `src/BlijvenLeren.App/Features/LearningResources/LearningResourceEndpointRouteBuilderExtensions.cs`
 - `src/BlijvenLeren.App/Pages/LearningResources/Create.cshtml.cs`
 - `src/BlijvenLeren.App/Pages/LearningResources/Edit.cshtml.cs`
 - `src/BlijvenLeren.App/Pages/LearningResources/Details.cshtml.cs`
@@ -67,7 +67,7 @@ Primary docs:
 - `docs/security.md`
 
 Main code entry points:
-- `src/BlijvenLeren.App/Program.cs`
+- `src/BlijvenLeren.App/Features/Comments/CommentEndpointRouteBuilderExtensions.cs`
 - `src/BlijvenLeren.App/Pages/LearningResources/Details.cshtml.cs`
 - `src/BlijvenLeren.App/Features/Comments/CommentSubmissionFactory.cs`
 - `src/BlijvenLeren.App/Features/Comments/CommentRequestValidator.cs`
@@ -90,7 +90,7 @@ Primary docs:
 - `docs/security.md`
 
 Main code entry points:
-- `src/BlijvenLeren.App/Program.cs`
+- `src/BlijvenLeren.App/Features/Comments/CommentEndpointRouteBuilderExtensions.cs`
 - `src/BlijvenLeren.App/Pages/Moderation/Comments.cshtml.cs`
 - `src/BlijvenLeren.App/Features/Comments/CommentModerationValidator.cs`
 - `src/BlijvenLeren.App/Features/LearningResources/LearningResourceContractMapper.cs`
@@ -110,7 +110,7 @@ Primary docs:
 - `docs/security.md`
 
 Main code entry points:
-- `src/BlijvenLeren.App/Program.cs`
+- `src/BlijvenLeren.App/Features/Auth/AuthEndpointRouteBuilderExtensions.cs`
 - `src/BlijvenLeren.App/Security/ClaimsPrincipalFactory.cs`
 - `src/BlijvenLeren.App/Security/AuthorityRewriteHandler.cs`
 - `src/BlijvenLeren.App/Pages/Protected.cshtml.cs`
@@ -133,7 +133,10 @@ Primary docs:
 - `README.md`
 
 Main code entry points:
-- `src/BlijvenLeren.App/Program.cs`
+- `src/BlijvenLeren.App/Features/Auth/AuthEndpointRouteBuilderExtensions.cs`
+- `src/BlijvenLeren.App/Features/Runtime/RuntimeEndpointRouteBuilderExtensions.cs`
+- `src/BlijvenLeren.App/Features/LearningResources/LearningResourceEndpointRouteBuilderExtensions.cs`
+- `src/BlijvenLeren.App/Features/Comments/CommentEndpointRouteBuilderExtensions.cs`
 - `src/BlijvenLeren.App/OpenApi/OpenApiDocumentConfiguration.cs`
 - `src/BlijvenLeren.App/OpenApi/OpenApiEndpointConventionBuilderExtensions.cs`
 - `src/BlijvenLeren.App/Contracts/V1/LearningResourceContracts.cs`
