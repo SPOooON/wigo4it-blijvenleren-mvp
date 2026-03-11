@@ -41,13 +41,17 @@ Current runtime behavior:
 - `app` seeds demo data automatically in the compose runtime when the database is empty
 - `idp` imports the local demo realm, roles, and test users on startup
 
+Current hosted validation behavior:
+- GitHub Actions runs the main Release build-and-test path on pull requests and pushes to `main`
+- hosted validation currently covers build and automated tests, not the compose runtime or the real OIDC redirect flow
+
 ## Current project structure
 
 The runnable application code currently lives in:
 
 - `src/BlijvenLeren.App`: single ASP.NET Core Razor Pages application with minimal API endpoints
 - `BlijvenLeren.sln`: top-level solution file for local build and future expansion
-- `test/BlijvenLeren.App.Tests`: unit and integration tests for the current learning-resource slice
+- `test/BlijvenLeren.App.Tests`: unit and integration tests covering learning resources, comments, moderation, browser flows, and OpenAPI behavior
 
 API route registration is now grouped by feature under `src/BlijvenLeren.App/Features/*/*EndpointRouteBuilderExtensions.cs`, while `Program.cs` stays focused on startup and top-level composition.
 
@@ -83,6 +87,11 @@ Current API docs behavior:
 - the document is filtered to `/api/*` paths so browser-login endpoints do not clutter the API review surface
 - Scalar provides the local interactive docs UI without becoming a long-term API-stack decision by itself
 - protected endpoints include explicit bearer-token guidance plus `401` and `403` response metadata
+
+Current test/runtime notes:
+- the automated suite runs both locally and in hosted CI through `dotnet test BlijvenLeren.sln -c Release`
+- the suite uses an in-process test host with EF Core InMemory rather than a containerized PostgreSQL runtime
+- compose startup behavior and the real Keycloak login redirect remain part of the manual review path
 
 ## Data layer
 
