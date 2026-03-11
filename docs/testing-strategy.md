@@ -46,12 +46,17 @@ Issue `#12` suite formalization:
 - `dotnet test BlijvenLeren.sln -c Release` runs the full suite reproducibly
 - `dotnet test test/BlijvenLeren.App.Tests/BlijvenLeren.App.Tests.csproj -c Release --filter FullyQualifiedName~BrowserSmoke` runs only the smoke path
 
+Issue `#39` hosted validation:
+- GitHub Actions now runs the main build-and-test path on pull requests and pushes to `main`
+- the workflow restores the local tool manifest, builds the solution in `Release`, and runs `dotnet test BlijvenLeren.sln -c Release`
+
 ## Deliberate limits
 
 - The integration tests replace PostgreSQL with EF Core InMemory, so they verify application behavior rather than provider-specific SQL behavior.
 - The browser coverage is server-rendered Razor Pages exercised through HTTP, not full browser automation.
 - This repo intentionally does not add a second UI-test framework yet because the current UI is still simple server-rendered pages and the assignment favors pragmatic scope.
 - The OIDC login redirect against local Keycloak is not part of the automated suite yet; it is still verified manually in the compose runtime.
+- The hosted CI path does not yet run a compose-level smoke test.
 
 ## Follow-up direction
 
