@@ -16,12 +16,15 @@
         <dd class="col-sm-9"><code>@Model.RoleSummary</code></dd>
     </dl>
 
-    <p>Browser-protected route: <code>/protected</code></p>
-    <p>API token validation route: <code>/api/auth/me</code></p>
-    <p>Browser CRUD route: <code>/LearningResources</code></p>
-    <p>Internal-only route: <code>/api/auth/internal</code></p>
-    <p>External-only route: <code>/api/auth/external</code></p>
-    <p>Internal-only seed reset: <code>POST /api/demo/seed-data?reset=true</code></p>
-    <p>Internal-only browser create route: <code>/LearningResources/Create</code></p>
-    <p>Internal-only moderation page: <code>/Moderation/Comments</code></p>
+    <ul class="mb-0">
+        <li>Browser-protected route: <a asp-page="/Protected"><code>/Protected</code></a></li>
+        <li>API token validation route: <a href="/api/auth/me"><code>/api/auth/me</code></a></li>
+        <li>Browser CRUD route: <a asp-page="/LearningResources/Index"><code>/LearningResources</code></a></li>
+        <li>API docs: <a href="/docs"><code>/docs</code></a></li>
+        <li>Internal-only route: <a href="/api/auth/internal"><code>/api/auth/internal</code></a></li>
+        <li>External-only route: <a href="/api/auth/external"><code>/api/auth/external</code></a></li>
+        <li>Internal-only seed reset: <code>POST /api/demo/seed-data?reset=true</code></li>
+        <li>Internal-only browser create route: <a asp-page="/LearningResources/Create"><code>/LearningResources/Create</code></a></li>
+        <li>Internal-only moderation page: <a asp-page="/Moderation/Comments"><code>/Moderation/Comments</code></a></li>
+    </ul>
 </section>
