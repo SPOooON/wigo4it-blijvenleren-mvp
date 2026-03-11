@@ -74,6 +74,7 @@ builder.Services.AddAuthentication(options =>
         options.UsePkce = true;
         options.SaveTokens = true;
         options.GetClaimsFromUserInfoEndpoint = false;
+        options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Disable;
         if (!string.IsNullOrWhiteSpace(authOptions.MetadataAddress))
         {
             options.MetadataAddress = authOptions.MetadataAddress;

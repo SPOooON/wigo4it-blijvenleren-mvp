@@ -188,6 +188,7 @@ Issue `#7` needs local authentication and role mapping, and issue `#45` extends 
 - The compose runtime can start with ready-to-use accounts and roles.
 - The local Keycloak realm can expose placeholder GitHub and Google brokers without storing real provider secrets in the repo.
 - Brokered social users can map to the existing `external-contributor` role instead of introducing a second external-user model.
+- The browser login flow disables PAR so Keycloak-specific broker hints remain explicit in the authorize request during local review.
 - Reviewers can test protected browser behavior through a normal identity-provider redirect flow.
 - API endpoints can still validate real bearer tokens issued by the local identity provider.
 - The runtime needs a small backchannel-host rewrite so the containerized app can talk to the host-exposed Keycloak authority while browsers still use `localhost`.

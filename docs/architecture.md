@@ -168,6 +168,7 @@ Current protected boundaries:
 Flow notes:
 - browser requests challenge through the app and are redirected to Keycloak
 - the app can suggest a preferred external identity provider to Keycloak through `kc_idp_hint`
+- pushed authorization is disabled for the browser OIDC flow so Keycloak-specific broker hints stay on the visible authorize request
 - the preferred external path currently points at the `GitHub` broker when that provider is configured
 - the app completes the OIDC callback and stores an auth cookie for subsequent browser navigation
 - API routes default to bearer-token authentication semantics so protected API calls do not depend on cookie redirects
