@@ -19,6 +19,46 @@
 </section>
 
 <section class="pb-4">
+    <h2 class="h4">Start Here</h2>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5">Browser review</h3>
+                    <p class="mb-3">Browse seeded learning resources, inspect details, and try the comment flow.</p>
+                    <a class="btn btn-primary" asp-page="/LearningResources/Index">Open resources</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5">API review</h3>
+                    <p class="mb-3">Open the generated API docs and test protected endpoints with a bearer token.</p>
+                    <a class="btn btn-outline-primary" href="/docs">Open API docs</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5">Moderation review</h3>
+                    <p class="mb-3">Internal users can review pending external comments in the moderation queue.</p>
+                    @if (User.IsInRole("internal-user"))
+                    {
+                        <a class="btn btn-outline-primary" asp-page="/Moderation/Comments">Open moderation</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Sign in as <code>internal.demo</code> to review moderation.</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pb-4">
     <h2 class="h4">Authentication</h2>
     @if (User.Identity?.IsAuthenticated ?? false)
     {
@@ -50,17 +90,29 @@
 </section>
 
 <section class="pb-4">
+    <h2 class="h4">Suggested review path</h2>
+    <ol class="mb-0">
+        <li>Open <a asp-page="/LearningResources/Index"><code>/LearningResources</code></a> and inspect a seeded resource.</li>
+        <li>Sign in as <code>external.demo</code> and add a comment from a resource details page.</li>
+        <li>Sign in as <code>internal.demo</code> and open <a asp-page="/Moderation/Comments"><code>/Moderation/Comments</code></a>.</li>
+        <li>Approve the pending comment and confirm it appears on the resource details page.</li>
+        <li>Open <a href="/docs"><code>/docs</code></a> to inspect or call the protected API routes.</li>
+    </ol>
+</section>
+
+<section class="pb-4">
     <h2 class="h4">Container runtime</h2>
     <p>
         Issue <code>#5</code> adds a Docker Compose runtime with one application container plus local database and
         identity-provider services.
     </p>
     <ul>
-        <li>Application: <code>@Model.AppBaseUrl</code></li>
+        <li>Application: <a href="@Model.AppBaseUrl"><code>@Model.AppBaseUrl</code></a></li>
         <li>Database host: <code>@Model.DatabaseHost:@Model.DatabasePort</code></li>
-        <li>Identity provider: <code>@Model.IdentityProviderAuthority</code></li>
-        <li>Dependency probe: <code>@Model.AppBaseUrl/api/health/dependencies</code></li>
-        <li>Token validation route: <code>@Model.AppBaseUrl/api/auth/me</code></li>
-        <li>Browser CRUD route: <code>@Model.AppBaseUrl/LearningResources</code></li>
+        <li>Identity provider: <a href="@Model.IdentityProviderAuthority"><code>@Model.IdentityProviderAuthority</code></a></li>
+        <li>API docs: <a href="@Model.ApiDocsUrl"><code>@Model.ApiDocsUrl</code></a></li>
+        <li>Dependency probe: <a href="@Model.DependencyProbeUrl"><code>@Model.DependencyProbeUrl</code></a></li>
+        <li>Token validation route: <a href="@Model.AuthMeUrl"><code>@Model.AuthMeUrl</code></a></li>
+        <li>Browser CRUD route: <a href="@Model.LearningResourcesUrl"><code>@Model.LearningResourcesUrl</code></a></li>
     </ul>
 </section>

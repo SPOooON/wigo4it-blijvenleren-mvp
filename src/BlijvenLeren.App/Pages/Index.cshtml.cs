@@ -16,6 +16,14 @@ public class IndexModel : PageModel
 
     public string AppBaseUrl => $"{Request.Scheme}://{Request.Host}";
 
+    public string ApiDocsUrl => $"{AppBaseUrl}/docs";
+
+    public string AuthMeUrl => $"{AppBaseUrl}/api/auth/me";
+
+    public string DependencyProbeUrl => $"{AppBaseUrl}/api/health/dependencies";
+
+    public string LearningResourcesUrl => $"{AppBaseUrl}/LearningResources";
+
     public string DatabaseHost => _runtimeOptions.Database.Host;
 
     public int DatabasePort => _runtimeOptions.Database.Port;
