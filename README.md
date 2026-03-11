@@ -28,6 +28,10 @@ If you want the fastest walkthrough of what is built versus deferred, start here
 - [Security](docs/security.md) for demo shortcuts and active safeguards
 - [Backlog](docs/backlog.md) for intentionally deferred work and its impact
 
+Current automation note:
+- pull requests now get a hosted GitHub Actions build-and-test check
+- compose runtime behavior and the real OIDC login redirect are still part of manual review
+
 ## What is included
 
 - .NET application code
