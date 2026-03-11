@@ -10,6 +10,9 @@ public sealed record UpdateLearningResourceRequest(
     string? Description,
     string? Url);
 
+public sealed record CreateCommentRequest(
+    string? Body);
+
 public sealed record LearningResourceListItemResponse(
     Guid Id,
     string Title,

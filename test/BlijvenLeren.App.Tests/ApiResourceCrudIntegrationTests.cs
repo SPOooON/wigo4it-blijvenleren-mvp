@@ -12,6 +12,7 @@ public sealed class ApiResourceCrudIntegrationTests : IClassFixture<TestApplicat
     public ApiResourceCrudIntegrationTests(TestApplicationFactory factory)
     {
         _factory = factory;
+        _factory.ResetState();
     }
 
     [Fact]
@@ -94,5 +95,51 @@ public sealed class ApiResourceCrudIntegrationTests : IClassFixture<TestApplicat
         Assert.Equal(HttpStatusCode.Forbidden, createResponse.StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, updateResponse.StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, deleteResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task InternalUser_Comment_IsVisibleImmediately()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add("X-Test-User", "internal.demo");
+        client.DefaultRequestHeaders.Add("X-Test-Roles", "internal-user");
+
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/v1/learning-resources/901a31cc-3ec7-4e8b-93cb-9cb6c49054af/comments",
+            new CreateCommentRequest("Internal comment from issue #10 API test."));
+
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+        var created = await createResponse.Content.ReadFromJsonAsync<CommentResponse>();
+        Assert.NotNull(created);
+        Assert.Equal("Approved", created.Status);
+
+        var detail = await client.GetFromJsonAsync<LearningResourceDetailResponse>(
+            "/api/v1/learning-resources/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+
+        Assert.NotNull(detail);
+        Assert.Contains(detail.Comments, comment => comment.Body == "Internal comment from issue #10 API test.");
+    }
+
+    [Fact]
+    public async Task ExternalUser_Comment_IsStoredAsPendingAndHiddenFromDetail()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add("X-Test-User", "external.demo");
+        client.DefaultRequestHeaders.Add("X-Test-Roles", "external-contributor");
+
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/v1/learning-resources/901a31cc-3ec7-4e8b-93cb-9cb6c49054af/comments",
+            new CreateCommentRequest("External comment waiting for moderation."));
+
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+        var created = await createResponse.Content.ReadFromJsonAsync<CommentResponse>();
+        Assert.NotNull(created);
+        Assert.Equal("Pending", created.Status);
+
+        var detail = await client.GetFromJsonAsync<LearningResourceDetailResponse>(
+            "/api/v1/learning-resources/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+
+        Assert.NotNull(detail);
+        Assert.DoesNotContain(detail.Comments, comment => comment.Body == "External comment waiting for moderation.");
     }
 }

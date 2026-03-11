@@ -35,6 +35,28 @@ else
         }
 
         <h2 class="h4 mb-3">Comments</h2>
+        @if (Model.CanComment)
+        {
+            <form method="post" asp-page-handler="Comment" asp-route-id="@Model.Resource.Id" class="vstack gap-3 mb-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div>
+                    <label asp-for="CommentInput.Body" class="form-label">Add comment</label>
+                    <textarea asp-for="CommentInput.Body" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="CommentInput.Body" class="text-danger"></span>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Submit comment</button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <p>
+                <a href="/account/login?returnUrl=%2FLearningResources%2FDetails%2F@Model.Resource.Id">Sign in</a>
+                to add a comment.
+            </p>
+        }
+
         @if (Model.Resource.Comments.Count == 0)
         {
             <div class="alert alert-info" role="alert">No comments have been added yet.</div>
@@ -65,4 +87,8 @@ else
             </div>
         }
     </section>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

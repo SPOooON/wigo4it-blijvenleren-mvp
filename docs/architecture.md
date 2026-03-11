@@ -56,10 +56,17 @@ This keeps the startup slice small while still demonstrating both browser and AP
 
 Current CRUD behavior:
 - `/LearningResources` lists the seeded learning resources in the browser
-- `/LearningResources/Details/{id}` shows resource details and moderation-state comments
+- `/LearningResources/Details/{id}` shows resource details and currently visible approved comments
 - `/LearningResources/Create` and `/LearningResources/Edit/{id}` are restricted to internal users
 - `DELETE` browser behavior is triggered from the details page and enforced server-side
 - `/api/v1/learning-resources` now covers list, detail, create, update, and delete operations
+
+Current comment behavior:
+- authenticated users can add comments from the resource details page or through `POST /api/v1/learning-resources/{id}/comments`
+- comment owner identity is stored separately from the display name so later moderation work has stable ownership metadata
+- internal-user comments are saved as `Approved` immediately
+- external-contributor comments are saved as `Pending`
+- normal resource detail views currently expose only approved comments
 
 ## Data layer
 
@@ -121,11 +128,13 @@ Current protected boundaries:
 - `/LearningResources/Create` requires the internal-user role
 - `/LearningResources/Edit/{id}` requires the internal-user role
 - delete behavior on `/LearningResources/Details/{id}` requires the internal-user role
+- comment submission on `/LearningResources/Details/{id}` requires authentication
 - `/api/demo/seed-data` requires the internal-user role
 - `/api/auth/internal` requires the internal-user role
 - `/api/auth/external` requires the external-contributor role
 - `/api/auth/me` accepts authenticated browser sessions or bearer tokens
 - `POST`, `PUT`, and `DELETE` on `/api/v1/learning-resources` require the internal-user role
+- `POST /api/v1/learning-resources/{id}/comments` requires authentication
 
 Flow notes:
 - browser requests challenge through the app and are redirected to Keycloak

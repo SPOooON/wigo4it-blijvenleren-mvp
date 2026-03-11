@@ -89,6 +89,7 @@ Useful endpoints after startup:
 - versioned create route: `POST http://localhost:8080/api/v1/learning-resources`
 - versioned update route: `PUT http://localhost:8080/api/v1/learning-resources/{id}`
 - versioned delete route: `DELETE http://localhost:8080/api/v1/learning-resources/{id}`
+- comment create route: `POST http://localhost:8080/api/v1/learning-resources/{id}/comments`
 - persistence smoke path: `POST http://localhost:8080/api/health/persistence-smoke`
 - demo data reseed path: `POST http://localhost:8080/api/demo/seed-data?reset=true`
 - current-user route: `GET http://localhost:8080/api/auth/me`
@@ -141,6 +142,12 @@ Issue `#9` completes the first learning-resource CRUD slice:
 - versioned update and delete API routes alongside the existing list, detail, and create routes
 - role checks enforced consistently across browser and API paths
 - integration coverage for API and browser happy paths using an in-memory test host
+
+Issue `#10` adds the first comment-submission slice:
+- authenticated users can add comments through the API and browser details page
+- internal-user comments are auto-approved and show up immediately in normal resource views
+- external-contributor comments are stored as pending for the later moderation workflow
+- comment owner identity is now stored alongside display metadata for future moderation decisions
 
 ### Database migration workflow
 
@@ -221,6 +228,19 @@ Learning-resource delete example:
 curl -X DELETE "http://localhost:8080/api/v1/learning-resources/<resource_id>" ^
   -H "Authorization: Bearer <internal_access_token>"
 ```
+
+Comment create example:
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/learning-resources/<resource_id>/comments" ^
+  -H "Authorization: Bearer <access_token>" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"body\":\"Useful follow-up context from the API demo flow.\"}"
+```
+
+Comment visibility note:
+- internal-user comments are returned immediately in the normal resource detail responses
+- external-contributor comments are stored as `Pending` and are not shown in the normal detail responses until moderation work is implemented
 
 ### Demo data workflow
 

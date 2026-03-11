@@ -46,6 +46,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                 .HasMaxLength(200)
                 .IsRequired();
 
+            entity.Property(comment => comment.AuthorIdentityName)
+                .HasMaxLength(200)
+                .IsRequired();
+
             entity.Property(comment => comment.Body)
                 .HasMaxLength(2000)
                 .IsRequired();

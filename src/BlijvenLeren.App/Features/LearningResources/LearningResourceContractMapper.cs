@@ -19,13 +19,20 @@ public static class LearningResourceContractMapper
 
     public static LearningResourceDetailResponse ToDetailResponse(LearningResource resource)
     {
+        return ToDetailResponse(resource, resource.Comments.Where(comment => comment.Status == CommentStatus.Approved));
+    }
+
+    public static LearningResourceDetailResponse ToDetailResponse(
+        LearningResource resource,
+        IEnumerable<Comment> comments)
+    {
         return new LearningResourceDetailResponse(
             resource.Id,
             resource.Title,
             resource.Description,
             resource.Url,
             resource.CreatedUtc,
-            resource.Comments
+            comments
                 .OrderBy(comment => comment.CreatedUtc)
                 .Select(ToCommentResponse)
                 .ToArray());
@@ -50,7 +57,7 @@ public static class LearningResourceContractMapper
         resource.Url = request.Url!.Trim();
     }
 
-    private static CommentResponse ToCommentResponse(Comment comment)
+    public static CommentResponse ToCommentResponse(Comment comment)
     {
         return new CommentResponse(
             comment.Id,

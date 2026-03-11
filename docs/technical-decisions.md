@@ -229,3 +229,21 @@ Issue `#9` requires both browser and API access, but the current MVP still favor
 - Implement only the API and defer browser CRUD: rejected because the issue explicitly requires both access paths.
 
 ---
+
+## TD-016 Store comment owner identity and keep external comments pending by default
+**Decision**
+When authenticated users submit comments, store a stable owner identity on the comment record and auto-approve only internal-user comments. External comments remain pending and are excluded from the normal resource detail reads for now.
+
+**Why**
+Issue `#10` needs role-aware publication behavior plus metadata that future moderation can act on. Storing only a display name would be too weak for later review decisions, while publishing all comments immediately would bypass the intended moderation direction.
+
+**Impact**
+- Internal users get immediate visible feedback when commenting.
+- External comments are persisted without being treated as public content yet.
+- Issue `#11` can build moderation behavior on top of stored ownership and status metadata instead of reworking the schema.
+
+**Rejected alternatives**
+- Publish all authenticated comments immediately: rejected because it conflicts with the later external moderation requirement.
+- Delay ownership metadata until moderation is implemented: rejected because it would create avoidable schema churn and weaker auditability.
+
+---

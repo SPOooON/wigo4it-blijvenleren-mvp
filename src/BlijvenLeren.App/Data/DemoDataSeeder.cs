@@ -55,6 +55,7 @@ public sealed class DemoDataSeeder(AppDbContext dbContext)
                     {
                         Id = Guid.Parse("6226c6d0-84af-4cca-8d70-a2501002ab7b"),
                         AuthorDisplayName = "Platform Coach",
+                        AuthorIdentityName = "platform.coach",
                         AuthorType = CommentAuthorType.Internal,
                         Body = "Good first stop for new teammates before deeper platform tracks.",
                         Status = CommentStatus.Approved,
@@ -65,6 +66,7 @@ public sealed class DemoDataSeeder(AppDbContext dbContext)
                     {
                         Id = Guid.Parse("858147fc-37c2-4d69-a85d-c9fdab5d46aa"),
                         AuthorDisplayName = "External Guest",
+                        AuthorIdentityName = "external.guest",
                         AuthorType = CommentAuthorType.External,
                         Body = "Could use a note about which modules are most relevant for non-engineers.",
                         Status = CommentStatus.Pending,
@@ -85,6 +87,7 @@ public sealed class DemoDataSeeder(AppDbContext dbContext)
                     {
                         Id = Guid.Parse("a11f6c9f-2e98-43a0-95da-70bd767f73c9"),
                         AuthorDisplayName = "Security Reviewer",
+                        AuthorIdentityName = "security.reviewer",
                         AuthorType = CommentAuthorType.Internal,
                         Body = "Keep this visible in the demo because it connects well to the documented security shortcuts.",
                         Status = CommentStatus.Approved,
@@ -95,6 +98,7 @@ public sealed class DemoDataSeeder(AppDbContext dbContext)
                     {
                         Id = Guid.Parse("86c8cdab-0c38-4b97-bc47-9bafcf046ea7"),
                         AuthorDisplayName = "Community Contributor",
+                        AuthorIdentityName = "community.contributor",
                         AuthorType = CommentAuthorType.External,
                         Body = "I submitted a related OWASP resource, but this one is probably enough for the MVP.",
                         Status = CommentStatus.Rejected,
@@ -116,6 +120,7 @@ public sealed class DemoDataSeeder(AppDbContext dbContext)
                     {
                         Id = Guid.Parse("d2060ff2-f743-4f34-a3c9-c8f69bceffb0"),
                         AuthorDisplayName = "Team Lead",
+                        AuthorIdentityName = "team.lead",
                         AuthorType = CommentAuthorType.Internal,
                         Body = "Useful reference for the reviewability goals in this assignment repo.",
                         Status = CommentStatus.Approved,
@@ -126,6 +131,7 @@ public sealed class DemoDataSeeder(AppDbContext dbContext)
                     {
                         Id = Guid.Parse("71f04c2c-8af7-42cf-9778-6b4ee2559f5b"),
                         AuthorDisplayName = "External Reviewer",
+                        AuthorIdentityName = "external.reviewer",
                         AuthorType = CommentAuthorType.External,
                         Body = "Would be nice to add one Dutch-language review article later.",
                         Status = CommentStatus.Pending,
