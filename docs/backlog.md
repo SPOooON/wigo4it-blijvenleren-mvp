@@ -24,3 +24,9 @@
 - Add environment-specific seed sets once reviewer and developer workflows diverge.
 - Add richer personas, more comments per resource, and moderation-history examples once the UI can surface them.
 - Replace the HTTP reseed endpoint with a more role-aware or operator-only flow once authentication and authorization are implemented.
+
+## Deferred from issue #7
+
+- Tighten token validation and cookie settings for production-like environments.
+- Move committed demo credentials and realm provisioning out of the default runtime for non-demo environments.
+- Add built-in OpenAPI generation and a local interactive API docs UI in issue `#20`.

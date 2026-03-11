@@ -172,3 +172,24 @@ Issue `#18` asks for predictable demo data aligned with the MVP runtime. Reusing
 **Rejected alternatives**
 - Maintain separate SQL seed scripts only: rejected because it duplicates model knowledge outside the app.
 - Seed unconditionally on every startup: rejected because it would overwrite manual demo changes too aggressively.
+
+---
+
+## TD-013 Use Keycloak realm import plus OIDC code flow for MVP authentication
+**Decision**
+Use a local Keycloak realm import for users and roles, and authenticate browser users through the OIDC authorization-code flow while also validating bearer tokens from the same IDP.
+
+**Why**
+Issue `#7` needs local authentication and role mapping. Using the standard browser-oriented OIDC flow keeps the MVP aligned with expected identity boundaries while still staying small enough for a local demo runtime.
+
+**Impact**
+- The compose runtime can start with ready-to-use accounts and roles.
+- Reviewers can test protected browser behavior through a normal identity-provider redirect flow.
+- API endpoints can still validate real bearer tokens issued by the local identity provider.
+- The runtime needs a small backchannel-host rewrite so the containerized app can talk to the host-exposed Keycloak authority while browsers still use `localhost`.
+
+**Rejected alternatives**
+- Delay authentication until CRUD features exist: rejected because the assignment explicitly requires login and roles.
+- Use an app-managed password exchange shortcut: rejected because it is less representative of a real browser login boundary and was unnecessary once the local OIDC flow was wired.
+
+---

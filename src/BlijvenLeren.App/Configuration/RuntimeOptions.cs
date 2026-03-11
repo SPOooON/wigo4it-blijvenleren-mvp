@@ -4,9 +4,16 @@ public sealed class RuntimeOptions
 {
     public const string SectionName = "Runtime";
 
+    public AuthenticationRuntimeOptions Authentication { get; init; } = new();
+
     public DatabaseOptions Database { get; init; } = new();
 
     public IdentityProviderOptions IdentityProvider { get; init; } = new();
+}
+
+public sealed class AuthenticationRuntimeOptions
+{
+    public string CookieName { get; init; } = "BlijvenLeren.Auth";
 }
 
 public sealed class DatabaseOptions
@@ -22,5 +29,5 @@ public sealed class DatabaseOptions
 
 public sealed class IdentityProviderOptions
 {
-    public string Authority { get; init; } = "http://localhost:8081";
+    public string Authority { get; init; } = "http://localhost:8081/realms/blijvenleren";
 }

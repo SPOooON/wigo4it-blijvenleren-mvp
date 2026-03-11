@@ -54,6 +54,11 @@ Then open:
 - `http://127.0.0.1:5078/` for the placeholder browser page
 - `http://127.0.0.1:5078/api/health` for the placeholder API health endpoint
 
+Local URL note:
+- the checked-in launch profile also uses port `5078`
+- the compose runtime uses port `8080`
+- if you see `http://localhost:5114`, you are not on the compose-hosted app
+
 You can also build the current solution with:
 
 ```bash
@@ -77,6 +82,9 @@ Useful endpoints after startup:
 - dependency probe: `http://localhost:8080/api/health/dependencies`
 - persistence smoke path: `POST http://localhost:8080/api/health/persistence-smoke`
 - demo data reseed path: `POST http://localhost:8080/api/demo/seed-data?reset=true`
+- current-user route: `GET http://localhost:8080/api/auth/me`
+- internal-only route: `GET http://localhost:8080/api/auth/internal`
+- external-only route: `GET http://localhost:8080/api/auth/external`
 - Keycloak admin console: `http://localhost:8081/` with `admin` / `admin`
 
 ## Current bootstrap scope
@@ -105,6 +113,13 @@ Issue `#18` adds predictable demo data:
 - external comments in `Pending` and `Rejected` moderation states
 - a reseed endpoint for resetting the local walkthrough data
 
+Issue `#7` adds the first authentication slice:
+- a local Keycloak realm import with `internal-user` and `external-contributor` roles
+- one test account per role
+- browser login through the app against the local identity provider
+- protected routes and role-gated API endpoints
+- bearer-token validation for API access
+
 ### Database migration workflow
 
 Restore the local EF tool:
@@ -122,6 +137,43 @@ dotnet ef database update --configuration Release --project src/BlijvenLeren.App
 Compose note:
 - `compose.yaml` sets `Runtime__Database__ApplyMigrationsOnStartup=true` for the `app` service, so the container runtime applies pending migrations automatically against the local PostgreSQL instance.
 - `compose.yaml` also sets `Runtime__Database__SeedDemoDataOnStartup=true`, so a clean local container runtime starts with representative review data.
+
+### Local login setup
+
+The local Keycloak realm is imported automatically in the compose runtime.
+
+Demo accounts:
+- internal user: `internal.demo / Passw0rd!`
+- external contributor: `external.demo / Passw0rd!`
+
+Browser flow:
+- open `http://localhost:8080/`
+- select `Login via local OIDC`
+- complete the Keycloak sign-in screen with one of the demo accounts
+- open `http://localhost:8080/protected`
+
+Flow notes:
+- browser sign-in uses the OIDC authorization-code flow with the local Keycloak realm
+- the app stores a local authentication cookie after the OIDC callback completes
+- API routes under `/api/*` validate bearer tokens from the same realm instead of relying on the browser cookie
+
+Bearer-token flow example:
+
+```bash
+curl -X POST "http://localhost:8081/realms/blijvenleren/protocol/openid-connect/token" ^
+  -H "Content-Type: application/x-www-form-urlencoded" ^
+  -d "client_id=blijvenleren-app&grant_type=password&username=internal.demo&password=Passw0rd!"
+```
+
+Use the returned access token with:
+
+```bash
+curl "http://localhost:8080/api/auth/me" -H "Authorization: Bearer <access_token>"
+```
+
+API docs note:
+- interactive API docs are deferred to follow-up issue `#20`
+- for now, use the documented curl examples or your preferred HTTP client against the local endpoints
 
 ### Demo data workflow
 
@@ -146,6 +198,7 @@ Expected seeded shape:
 - If the app starts before `db` or `idp` is fully ready, refresh `http://localhost:8080/api/health/dependencies` after a few seconds. Full healthchecks are deferred follow-up work.
 - If you are running the app outside Docker and do not want startup migrations, leave `Runtime__Database__ApplyMigrationsOnStartup` unset or `false`.
 - If you are running the app outside Docker and want startup seeding, set `Runtime__Database__SeedDemoDataOnStartup=true`.
+- If login fails immediately after startup, wait for Keycloak realm import to finish and try again a few seconds later.
 
 ## Why Terraform is not included in this MVP
 
