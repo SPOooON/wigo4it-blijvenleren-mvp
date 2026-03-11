@@ -283,3 +283,21 @@ Issue `#12` asks for reliable automated checks without overbuilding infrastructu
 - Split unit, integration, and browser checks into multiple test projects now: rejected because the current test volume does not justify the extra project structure.
 
 ---
+
+## TD-019 Make requirement traceability explicit in the repo docs
+**Decision**
+Keep requirement coverage, deferred work, and review guidance explicit across the README and the dedicated docs instead of relying on reviewers to infer status from code or PR history alone.
+
+**Why**
+Issue `#13` exists because this repository is part of an interview assignment, not just a code drop. Reviewers need a fast way to see what is built, what is partial, what is deferred, and why those trade-offs were made.
+
+**Impact**
+- `docs/functional-requirements.md` now acts as the primary requirement traceability document.
+- `docs/backlog.md` stays focused on still-relevant deferred work plus its impact.
+- The README can be used as a guided entry point rather than only as a runbook.
+
+**Rejected alternatives**
+- Keep the rationale only in PRs and commit history: rejected because it makes repository review slower and less durable.
+- Add a separate ADR system now: rejected because the current repo size does not yet justify another documentation framework.
+
+---

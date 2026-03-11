@@ -17,6 +17,15 @@ The original brief is intentionally open-ended and expects pragmatic choices rat
 - a local, containerized setup for application, database and identity provider
 - diagrams that explain the architecture and authentication model
 
+## Review guide
+
+If you want the fastest walkthrough of what is built versus deferred, start here:
+- [Functional requirements](docs/functional-requirements.md) for requirement-to-implementation traceability
+- [Architecture](docs/architecture.md) for the current runtime, auth, and moderation design
+- [Testing strategy](docs/testing-strategy.md) for what is covered automatically and what is still manual
+- [Security](docs/security.md) for demo shortcuts and active safeguards
+- [Backlog](docs/backlog.md) for intentionally deferred work and its impact
+
 ## What is included
 
 - .NET application code
@@ -180,6 +189,17 @@ Issue `#12` formalizes the MVP automated test suite:
 - one test project now covers validation, mapping, API integration, and browser-facing Razor Pages checks
 - the suite includes an explicit `BrowserSmoke` path for the main list-to-details journey
 - README and testing docs now describe the reproducible local test commands
+
+## Traceability summary
+
+Current implemented requirement coverage:
+- FR-01 through FR-11 are implemented in the current MVP slice
+- FR-12 and FR-13 are implemented as an MVP subset rather than a fully polished product surface
+
+Current notable deferrals:
+- interactive API docs are tracked in issue `#20`
+- browser/API list ergonomics such as pagination, filtering, and sorting remain deferred
+- production hardening, richer moderation auditability, and cloud/IaC concerns remain intentionally out of MVP scope
 
 ### Database migration workflow
 

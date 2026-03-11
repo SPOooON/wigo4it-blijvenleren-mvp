@@ -58,3 +58,9 @@ Issue `#12` suite formalization:
 - Add provider-realistic persistence tests if query complexity increases.
 - Add browser automation if the UI becomes more interactive than basic Razor Pages forms.
 - Add compose-level smoke checks once CI/runtime setup becomes part of the assignment scope.
+
+## Review traceability
+
+- Requirement coverage lives in `docs/functional-requirements.md`.
+- Security-sensitive behavior under test is summarized in `docs/security.md`.
+- Remaining testing gaps are tracked in `docs/backlog.md`.
