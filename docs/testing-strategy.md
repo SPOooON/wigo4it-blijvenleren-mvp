@@ -33,6 +33,12 @@ Issue `#10` coverage:
 - internal-user browser comment submission showing the new comment immediately
 - external-user browser comment submission succeeding without surfacing the pending comment yet
 
+Issue `#11` coverage:
+- internal-user pending-comment list API reads
+- internal-user approve and reject moderation API paths
+- invalid moderation attempts against non-pending or internal comments
+- internal-user browser moderation flow approving a pending comment and making it visible in the normal detail page
+
 ## Deliberate limits
 
 - The integration tests replace PostgreSQL with EF Core InMemory, so they verify application behavior rather than provider-specific SQL behavior.

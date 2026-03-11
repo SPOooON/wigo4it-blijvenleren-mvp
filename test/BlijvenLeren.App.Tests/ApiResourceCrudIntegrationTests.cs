@@ -142,4 +142,72 @@ public sealed class ApiResourceCrudIntegrationTests : IClassFixture<TestApplicat
         Assert.NotNull(detail);
         Assert.DoesNotContain(detail.Comments, comment => comment.Body == "External comment waiting for moderation.");
     }
+
+    [Fact]
+    public async Task InternalUser_CanListAndApprovePendingExternalComments()
+    {
+        using var internalClient = _factory.CreateClient();
+        internalClient.DefaultRequestHeaders.Add("X-Test-User", "internal.demo");
+        internalClient.DefaultRequestHeaders.Add("X-Test-Roles", "internal-user");
+
+        var pendingComments = await internalClient.GetFromJsonAsync<List<PendingCommentResponse>>("/api/v1/comments/pending");
+        Assert.NotNull(pendingComments);
+        var pending = Assert.Single(pendingComments, comment => comment.Id == Guid.Parse("6b8b684d-a9d7-4b3f-8ebf-12d6736103f4"));
+
+        var moderateResponse = await internalClient.PostAsJsonAsync(
+            $"/api/v1/comments/{pending.Id}/moderation",
+            new ModerateCommentRequest("approve"));
+
+        Assert.Equal(HttpStatusCode.OK, moderateResponse.StatusCode);
+        var moderated = await moderateResponse.Content.ReadFromJsonAsync<CommentResponse>();
+        Assert.NotNull(moderated);
+        Assert.Equal("Approved", moderated.Status);
+
+        var detail = await internalClient.GetFromJsonAsync<LearningResourceDetailResponse>(
+            "/api/v1/learning-resources/f116d693-f390-45ec-8d0b-23f6784d65b4");
+        Assert.NotNull(detail);
+        Assert.Contains(detail.Comments, comment => comment.Body == "Could be useful when the UI grows beyond simple forms.");
+    }
+
+    [Fact]
+    public async Task InternalUser_CanRejectPendingExternalComment()
+    {
+        using var internalClient = _factory.CreateClient();
+        internalClient.DefaultRequestHeaders.Add("X-Test-User", "internal.demo");
+        internalClient.DefaultRequestHeaders.Add("X-Test-Roles", "internal-user");
+
+        var moderateResponse = await internalClient.PostAsJsonAsync(
+            "/api/v1/comments/6b8b684d-a9d7-4b3f-8ebf-12d6736103f4/moderation",
+            new ModerateCommentRequest("reject"));
+
+        Assert.Equal(HttpStatusCode.OK, moderateResponse.StatusCode);
+        var moderated = await moderateResponse.Content.ReadFromJsonAsync<CommentResponse>();
+        Assert.NotNull(moderated);
+        Assert.Equal("Rejected", moderated.Status);
+
+        var detail = await internalClient.GetFromJsonAsync<LearningResourceDetailResponse>(
+            "/api/v1/learning-resources/f116d693-f390-45ec-8d0b-23f6784d65b4");
+        Assert.NotNull(detail);
+        Assert.DoesNotContain(detail.Comments, comment => comment.Body == "Could be useful when the UI grows beyond simple forms.");
+    }
+
+    [Fact]
+    public async Task Moderation_RejectsInvalidStateTransitions()
+    {
+        using var internalClient = _factory.CreateClient();
+        internalClient.DefaultRequestHeaders.Add("X-Test-User", "internal.demo");
+        internalClient.DefaultRequestHeaders.Add("X-Test-Roles", "internal-user");
+
+        var internalComment = await internalClient.PostAsJsonAsync(
+            "/api/v1/learning-resources/901a31cc-3ec7-4e8b-93cb-9cb6c49054af/comments",
+            new CreateCommentRequest("Internal comment that should not be moderated."));
+        var created = await internalComment.Content.ReadFromJsonAsync<CommentResponse>();
+        Assert.NotNull(created);
+
+        var moderateResponse = await internalClient.PostAsJsonAsync(
+            $"/api/v1/comments/{created.Id}/moderation",
+            new ModerateCommentRequest("reject"));
+
+        Assert.Equal(HttpStatusCode.Conflict, moderateResponse.StatusCode);
+    }
 }

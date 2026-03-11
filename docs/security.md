@@ -29,6 +29,8 @@ This MVP uses a local Keycloak instance to demonstrate authentication and role-b
 - API create, update, and delete routes for learning resources are restricted to the `internal-user` role.
 - Comment submission requires an authenticated browser session or bearer token.
 - External comments are stored as pending instead of being published immediately in the normal resource views.
+- Pending-comment review and moderation actions are restricted to the `internal-user` role.
+- Server-side moderation rules reject attempts to moderate internal comments or already-moderated comments.
 
 ## Deferred hardening
 

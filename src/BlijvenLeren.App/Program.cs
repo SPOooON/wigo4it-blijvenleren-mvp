@@ -308,6 +308,57 @@ app.MapPost(
     .RequireAuthorization()
     .WithSummary("Add a comment to a learning resource. Internal comments are auto-approved; external comments stay pending.");
 
+app.MapGet(
+    "/api/v1/comments/pending",
+    async (AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var comments = await dbContext.Comments
+            .AsNoTracking()
+            .Include(comment => comment.LearningResource)
+            .Where(comment => comment.AuthorType == CommentAuthorType.External && comment.Status == CommentStatus.Pending)
+            .OrderBy(comment => comment.CreatedUtc)
+            .ToListAsync(cancellationToken);
+
+        return Results.Ok(comments.Select(LearningResourceContractMapper.ToPendingCommentResponse));
+    })
+    .RequireAuthorization("InternalUser")
+    .WithSummary("List pending external comments for moderation.");
+
+app.MapPost(
+    "/api/v1/comments/{id:guid}/moderation",
+    async (Guid id, ModerateCommentRequest request, AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var errors = CommentModerationValidator.ValidateRequest(request);
+        if (errors.Count > 0)
+        {
+            return Results.ValidationProblem(errors);
+        }
+
+        var comment = await dbContext.Comments
+            .Include(savedComment => savedComment.LearningResource)
+            .SingleOrDefaultAsync(savedComment => savedComment.Id == id, cancellationToken);
+
+        if (comment is null)
+        {
+            return Results.NotFound();
+        }
+
+        var transitionError = CommentModerationValidator.ValidateTransition(comment);
+        if (transitionError is not null)
+        {
+            return Results.Conflict(new { error = transitionError });
+        }
+
+        CommentModerationValidator.TryParseAction(request.Action!, out var targetStatus);
+        comment.Status = targetStatus;
+        comment.ModeratedUtc = DateTimeOffset.UtcNow;
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok(LearningResourceContractMapper.ToCommentResponse(comment));
+    })
+    .RequireAuthorization("InternalUser")
+    .WithSummary("Approve or reject a pending external comment.");
+
 app.MapPut(
     "/api/v1/learning-resources/{id:guid}",
     async (Guid id, UpdateLearningResourceRequest request, AppDbContext dbContext, CancellationToken cancellationToken) =>
