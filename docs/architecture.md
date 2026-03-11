@@ -49,6 +49,8 @@ The runnable application code currently lives in:
 - `BlijvenLeren.sln`: top-level solution file for local build and future expansion
 - `test/BlijvenLeren.App.Tests`: unit and integration tests for the current learning-resource slice
 
+API route registration is now grouped by feature under `src/BlijvenLeren.App/Features/*/*EndpointRouteBuilderExtensions.cs`, while `Program.cs` stays focused on startup and top-level composition.
+
 Current entry-point behavior:
 - `/` serves the current MVP landing page with auth and runtime guidance
 - `/api/health` serves a simple app-health response
@@ -104,7 +106,7 @@ The current domain/API baseline intentionally keeps modeling straightforward:
 
 - EF Core entities remain the current domain model for the MVP
 - versioned transport contracts live separately under `Contracts/V1`
-- mapping and validation live in `Features/LearningResources`
+- endpoint registration, mapping, and validation live under `Features/*`
 - the current versioned API slice covers list, detail, create, update, and delete behavior for learning resources plus comment and moderation endpoints
 
 This keeps the current layer count low while still separating persistence entities from external request/response contracts.
