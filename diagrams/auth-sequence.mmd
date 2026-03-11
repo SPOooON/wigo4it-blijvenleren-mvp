@@ -3,17 +3,18 @@ sequenceDiagram
     actor User
     participant Web as Web App
     participant IDP as Identity Provider
-    participant API as API
     participant DB as Database
 
     User->>Web: Open app
-    Web->>IDP: Redirect to login
-    User->>IDP: Submit credentials
-    IDP-->>Web: Auth code / token response
-    Web->>API: Request with bearer token
-    API->>IDP: Validate token and claims
-    IDP-->>API: Token valid + roles
-    API->>DB: Read or write resource/comment
-    DB-->>API: Result
-    API-->>Web: Response
-    Web-->>User: Render updated view
+    User->>Web: Start login
+    Web-->>User: Redirect to OIDC authorize endpoint
+    User->>IDP: Sign in with demo account
+    IDP-->>Web: Authorization code callback
+    Web->>IDP: Redeem code for tokens
+    IDP-->>Web: Tokens with realm roles
+    Web->>Web: Create local auth cookie with mapped roles
+    User->>Web: Open protected page or call protected API
+    Web->>IDP: Validate bearer token metadata when API token is used
+    Web->>DB: Read or write resource/comment
+    DB-->>Web: Result
+    Web-->>User: Protected response

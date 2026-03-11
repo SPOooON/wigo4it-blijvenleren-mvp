@@ -1,8 +1,15 @@
+using System.Security.Claims;
 using System.Net.Sockets;
 using BlijvenLeren.App.Configuration;
 using BlijvenLeren.App.Data;
 using BlijvenLeren.App.Data.Entities;
+using BlijvenLeren.App.Security;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,11 +19,129 @@ builder.Logging.AddConsole();
 
 builder.Services.Configure<RuntimeOptions>(
     builder.Configuration.GetSection(RuntimeOptions.SectionName));
+builder.Services.Configure<AuthOptions>(
+    builder.Configuration.GetSection(AuthOptions.SectionName));
+var authOptions = builder.Configuration.GetSection(AuthOptions.SectionName).Get<AuthOptions>()
+    ?? throw new InvalidOperationException("Authentication settings are not configured.");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BlijvenLeren")));
+builder.Services.AddScoped<ClaimsPrincipalFactory>();
 builder.Services.AddScoped<DemoDataSeeder>();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = "AppOrBearer";
+        options.DefaultChallengeScheme = "AppOrBearer";
+        options.DefaultForbidScheme = "AppOrBearer";
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddPolicyScheme("AppOrBearer", "App or bearer token", options =>
+    {
+        options.ForwardDefaultSelector = context =>
+        {
+            var authorizationHeader = context.Request.Headers.Authorization.ToString();
+            if (authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                return JwtBearerDefaults.AuthenticationScheme;
+            }
+
+            return context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase)
+                ? JwtBearerDefaults.AuthenticationScheme
+                : CookieAuthenticationDefaults.AuthenticationScheme;
+        };
+    })
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = builder.Configuration["Runtime:Authentication:CookieName"] ?? "BlijvenLeren.Auth";
+        options.AccessDeniedPath = "/";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.ForwardChallenge = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+    {
+        options.Authority = authOptions.Authority;
+        options.ClientId = authOptions.ClientId;
+        options.RequireHttpsMetadata = false;
+        options.ResponseType = "code";
+        options.UsePkce = true;
+        options.SaveTokens = true;
+        options.GetClaimsFromUserInfoEndpoint = false;
+        if (!string.IsNullOrWhiteSpace(authOptions.MetadataAddress))
+        {
+            options.MetadataAddress = authOptions.MetadataAddress;
+        }
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            NameClaimType = "preferred_username",
+            RoleClaimType = ClaimTypes.Role,
+            ValidIssuer = authOptions.Authority
+        };
+
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+        options.BackchannelHttpHandler = new AuthorityRewriteHandler(authOptions.Authority, authOptions.BackchannelAuthority);
+        options.Events = new OpenIdConnectEvents
+        {
+            OnTokenValidated = context =>
+            {
+                if (context.Principal?.Identity is ClaimsIdentity identity)
+                {
+                    var claimsFactory = context.HttpContext.RequestServices.GetRequiredService<ClaimsPrincipalFactory>();
+                    var accessToken = context.TokenEndpointResponse?.AccessToken;
+                    if (!string.IsNullOrWhiteSpace(accessToken))
+                    {
+                        claimsFactory.AddRoleClaimsFromAccessToken(accessToken, identity);
+                    }
+                    else
+                    {
+                        claimsFactory.AddRoleClaimsFromRealmAccess(identity);
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    })
+    .AddJwtBearer(options =>
+    {
+        options.Authority = authOptions.Authority;
+        if (!string.IsNullOrWhiteSpace(authOptions.MetadataAddress))
+        {
+            options.MetadataAddress = authOptions.MetadataAddress;
+        }
+        options.RequireHttpsMetadata = false;
+        options.BackchannelHttpHandler = new AuthorityRewriteHandler(authOptions.Authority, authOptions.BackchannelAuthority);
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            NameClaimType = "preferred_username",
+            RoleClaimType = ClaimTypes.Role,
+            ValidateAudience = false,
+            ValidIssuer = authOptions.Authority
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                if (context.Principal?.Identity is ClaimsIdentity identity)
+                {
+                    var claimsFactory = context.HttpContext.RequestServices.GetRequiredService<ClaimsPrincipalFactory>();
+                    claimsFactory.AddRoleClaimsFromRealmAccess(identity);
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("InternalUser", policy => policy.RequireRole(builder.Configuration[$"{AuthOptions.SectionName}:InternalUserRole"] ?? "internal-user"));
+    options.AddPolicy("ExternalContributor", policy => policy.RequireRole(builder.Configuration[$"{AuthOptions.SectionName}:ExternalContributorRole"] ?? "external-contributor"));
+});
 
 var app = builder.Build();
 
@@ -36,7 +161,33 @@ if (!app.Environment.IsDevelopment())
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet(
+    "/account/login",
+    (string? returnUrl) =>
+    {
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true,
+            RedirectUri = string.IsNullOrWhiteSpace(returnUrl) ? "/protected" : returnUrl
+        };
+        return Results.Challenge(authProperties, [OpenIdConnectDefaults.AuthenticationScheme]);
+    });
+
+app.MapPost(
+    "/account/logout",
+    (HttpContext httpContext) =>
+    {
+        var authProperties = new AuthenticationProperties
+        {
+            RedirectUri = "/"
+        };
+        return Results.SignOut(
+            authProperties,
+            [CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme]);
+    });
 
 app.MapGet("/api/health", () => Results.Ok(new
 {
@@ -125,7 +276,24 @@ app.MapPost(
     {
         var result = await seeder.SeedAsync(reset ?? false, cancellationToken);
         return Results.Ok(result);
-    });
+    })
+    .RequireAuthorization("InternalUser");
+
+app.MapGet(
+    "/api/auth/me",
+    (ClaimsPrincipal user) => Results.Ok(new
+    {
+        authenticated = user.Identity?.IsAuthenticated ?? false,
+        username = user.Identity?.Name,
+        roles = user.FindAll(ClaimTypes.Role).Select(claim => claim.Value).Distinct()
+    }))
+    .RequireAuthorization();
+
+app.MapGet("/api/auth/internal", () => Results.Ok(new { status = "ok", role = "internal-user" }))
+    .RequireAuthorization("InternalUser");
+
+app.MapGet("/api/auth/external", () => Results.Ok(new { status = "ok", role = "external-contributor" }))
+    .RequireAuthorization("ExternalContributor");
 
 app.MapStaticAssets();
 app.MapRazorPages()

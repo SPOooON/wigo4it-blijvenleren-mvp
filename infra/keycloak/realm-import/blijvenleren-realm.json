@@ -1,0 +1,77 @@
+{
+  "realm": "blijvenleren",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "internal-user",
+        "description": "Internal user role for local demo scenarios."
+      },
+      {
+        "name": "external-contributor",
+        "description": "External contributor role for local demo scenarios."
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "blijvenleren-app",
+      "name": "BlijvenLeren App",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:8080/signin-oidc",
+        "http://localhost:8080/signout-callback-oidc",
+        "http://127.0.0.1:5078/signin-oidc",
+        "http://127.0.0.1:5078/signout-callback-oidc"
+      ],
+      "webOrigins": [
+        "http://localhost:8080",
+        "http://127.0.0.1:5078"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "internal.demo",
+      "enabled": true,
+      "email": "internal.demo@example.local",
+      "emailVerified": true,
+      "firstName": "Internal",
+      "lastName": "Demo",
+      "requiredActions": [],
+      "realmRoles": [
+        "internal-user"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "external.demo",
+      "enabled": true,
+      "email": "external.demo@example.local",
+      "emailVerified": true,
+      "firstName": "External",
+      "lastName": "Demo",
+      "requiredActions": [],
+      "realmRoles": [
+        "external-contributor"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

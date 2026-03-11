@@ -1,4 +1,5 @@
 using BlijvenLeren.App.Configuration;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 
@@ -20,6 +21,10 @@ public class IndexModel : PageModel
     public int DatabasePort => _runtimeOptions.Database.Port;
 
     public string IdentityProviderAuthority => _runtimeOptions.IdentityProvider.Authority;
+
+    public string? Error => Request.Query["error"];
+
+    public string RoleSummary => string.Join(", ", User.FindAll(ClaimTypes.Role).Select(claim => claim.Value));
 
     public void OnGet()
     {

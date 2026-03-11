@@ -16,6 +16,37 @@
 </section>
 
 <section class="pb-4">
+    <h2 class="h4">Authentication</h2>
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <p>
+            Signed in as <code>@User.Identity?.Name</code> with roles
+            <code>@Model.RoleSummary</code>.
+        </p>
+        <p><a class="btn btn-outline-primary" asp-page="/Protected">Open protected area</a></p>
+        <form method="post" action="/account/logout">
+            <button class="btn btn-outline-secondary" type="submit">Logout</button>
+        </form>
+    }
+    else
+    {
+        <p>
+            Sign in through the local Keycloak realm to access protected functionality.
+        </p>
+        @if (!string.IsNullOrWhiteSpace(Model.Error))
+        {
+            <div class="alert alert-danger" role="alert">
+                Login failed. Ensure the local IDP is running and try again.
+            </div>
+        }
+        <p><a class="btn btn-primary" href="/account/login?returnUrl=%2Fprotected">Login via local OIDC</a></p>
+        <p class="mt-3 mb-0">
+            Test accounts: <code>internal.demo / Passw0rd!</code> and <code>external.demo / Passw0rd!</code>
+        </p>
+    }
+</section>
+
+<section class="pb-4">
     <h2 class="h4">Container runtime</h2>
     <p>
         Issue <code>#5</code> adds a Docker Compose runtime with one application container plus local database and
@@ -26,5 +57,6 @@
         <li>Database host: <code>@Model.DatabaseHost:@Model.DatabasePort</code></li>
         <li>Identity provider: <code>@Model.IdentityProviderAuthority</code></li>
         <li>Dependency probe: <code>@Model.AppBaseUrl/api/health/dependencies</code></li>
+        <li>Token validation route: <code>@Model.AppBaseUrl/api/auth/me</code></li>
     </ul>
 </section>

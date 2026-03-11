@@ -1,0 +1,24 @@
+@page
+@model BlijvenLeren.App.Pages.ProtectedModel
+@{
+    ViewData["Title"] = "Protected";
+}
+
+<section class="py-4">
+    <h1 class="display-6 mb-3">Protected Demo Area</h1>
+    <p class="lead">This page is only available after authenticating through the local identity provider.</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Signed in as</dt>
+        <dd class="col-sm-9"><code>@Model.Username</code></dd>
+
+        <dt class="col-sm-3">Roles</dt>
+        <dd class="col-sm-9"><code>@Model.RoleSummary</code></dd>
+    </dl>
+
+    <p>Browser-protected route: <code>/protected</code></p>
+    <p>API token validation route: <code>/api/auth/me</code></p>
+    <p>Internal-only route: <code>/api/auth/internal</code></p>
+    <p>External-only route: <code>/api/auth/external</code></p>
+    <p>Internal-only seed reset: <code>POST /api/demo/seed-data?reset=true</code></p>
+</section>

@@ -8,12 +8,16 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      Authentication__Authority: http://localhost:8081/realms/blijvenleren
+      Authentication__BackchannelAuthority: http://host.docker.internal:8081/realms/blijvenleren
       ConnectionStrings__BlijvenLeren: Host=db;Port=5432;Database=blijvenleren;Username=blijvenleren;Password=blijvenleren
       Runtime__Database__ApplyMigrationsOnStartup: true
       Runtime__Database__SeedDemoDataOnStartup: true
       Runtime__Database__Host: db
       Runtime__Database__Port: 5432
-      Runtime__IdentityProvider__Authority: http://idp:8080
+      Runtime__IdentityProvider__Authority: http://idp:8080/realms/blijvenleren
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8080:8080"
     depends_on:
@@ -36,11 +40,16 @@ services:
     command:
       - start-dev
       - --http-port=8080
+      - --import-realm
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://localhost:8081
+      KC_HOSTNAME_STRICT: "false"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     ports:
       - "8081:8080"
+    volumes:
+      - ./infra/keycloak/realm-import:/opt/keycloak/data/import:ro
 
 volumes:
   postgres-data:

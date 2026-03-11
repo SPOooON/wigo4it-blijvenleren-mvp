@@ -38,6 +38,7 @@ Current runtime behavior:
 - `app` exposes `/api/health/dependencies` to show whether those dependencies are reachable from inside the runtime
 - `app` applies pending EF Core migrations automatically in the compose runtime before serving requests
 - `app` seeds demo data automatically in the compose runtime when the database is empty
+- `idp` imports the local demo realm, roles, and test users on startup
 
 ## Current project structure
 
@@ -82,6 +83,31 @@ The seeded data intentionally demonstrates:
 - internal comments that are already approved
 - external comments awaiting moderation
 - external comments that were rejected
+
+## Authentication layer
+
+The current authentication setup uses:
+
+- Keycloak as the local identity provider
+- one local realm imported through the compose runtime
+- two realm roles:
+  - `internal-user`
+  - `external-contributor`
+- OIDC authorization-code flow for browser sign-in
+- cookie auth for browser sessions
+- JWT bearer validation for protected API endpoints
+
+Current protected boundaries:
+- `/protected` requires authentication
+- `/api/demo/seed-data` requires the internal-user role
+- `/api/auth/internal` requires the internal-user role
+- `/api/auth/external` requires the external-contributor role
+- `/api/auth/me` accepts authenticated browser sessions or bearer tokens
+
+Flow notes:
+- browser requests challenge through the app and are redirected to Keycloak
+- the app completes the OIDC callback and stores an auth cookie for subsequent browser navigation
+- API routes default to bearer-token authentication semantics so protected API calls do not depend on cookie redirects
 
 ## Design goals
 
