@@ -31,6 +31,13 @@ This MVP uses a local Keycloak instance to demonstrate authentication and role-b
 - External comments are stored as pending instead of being published immediately in the normal resource views.
 - Pending-comment review and moderation actions are restricted to the `internal-user` role.
 - Server-side moderation rules reject attempts to moderate internal comments or already-moderated comments.
+- The local docs UI only documents bearer-token use for protected API endpoints; it does not bypass the app's normal authorization checks.
+
+## API docs auth behavior
+
+- `/openapi/v1.json` and `/docs` are local review aids, not separate auth surfaces.
+- Protected endpoints in the generated document are annotated with bearer-token guidance and `401` / `403` responses.
+- For local review, obtain a bearer token from the demo Keycloak realm and use that token in the docs UI when calling protected endpoints.
 
 ## Deferred hardening
 

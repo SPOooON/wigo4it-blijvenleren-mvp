@@ -36,6 +36,7 @@ Current runtime behavior:
 - `app` can reach `db` through the compose network name `db`
 - `app` can reach `idp` through the compose network name `idp`
 - `app` exposes `/api/health/dependencies` to show whether those dependencies are reachable from inside the runtime
+- `app` exposes `/openapi/v1.json` for the generated API document and `/docs` for the local interactive docs UI
 - `app` applies pending EF Core migrations automatically in the compose runtime before serving requests
 - `app` seeds demo data automatically in the compose runtime when the database is empty
 - `idp` imports the local demo realm, roles, and test users on startup
@@ -74,6 +75,12 @@ Current moderation behavior:
 - moderation actions go through `POST /api/v1/comments/{id}/moderation` or the browser approve/reject forms
 - only pending external comments can transition to `Approved` or `Rejected`
 - moderation timestamps are recorded when an internal user makes the decision
+
+Current API docs behavior:
+- the built-in ASP.NET Core OpenAPI stack generates a local `v1` document
+- the document is filtered to `/api/*` paths so browser-login endpoints do not clutter the API review surface
+- Scalar provides the local interactive docs UI without becoming a long-term API-stack decision by itself
+- protected endpoints include explicit bearer-token guidance plus `401` and `403` response metadata
 
 ## Data layer
 

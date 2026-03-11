@@ -41,9 +41,16 @@ The demo data is predictable and useful, but still optimized for one shared MVP 
 
 - Tighten token validation and cookie settings for production-like environments.
 - Move committed demo credentials and realm provisioning out of the default runtime for non-demo environments.
-- Add built-in OpenAPI generation and a local interactive API docs UI in issue `#20`.
 Impact:
 Authentication is suitable for local review, not for production deployment.
+
+## Deferred from issue #20
+
+- Add richer endpoint descriptions, examples, and tags as the API surface grows.
+- Add environment-specific exposure rules so API docs are not automatically available outside local review environments.
+- Revisit grouping and tagging once the API expands beyond the current MVP slices.
+Impact:
+The docs surface is now useful for local review, but still intentionally lightweight and local-first.
 
 ## Deferred from issue #8
 

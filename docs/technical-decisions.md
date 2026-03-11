@@ -301,3 +301,21 @@ Issue `#13` exists because this repository is part of an interview assignment, n
 - Add a separate ADR system now: rejected because the current repo size does not yet justify another documentation framework.
 
 ---
+
+## TD-020 Use the built-in ASP.NET Core OpenAPI stack plus a separate local docs UI
+**Decision**
+Generate the OpenAPI document with `Microsoft.AspNetCore.OpenApi` and expose the local interactive review surface through Scalar.
+
+**Why**
+Issue `#20` asks for a platform-aligned API docs setup after the authentication work settled. The built-in OpenAPI stack keeps the document generation close to ASP.NET Core itself, while a separate UI keeps the interactive layer replaceable.
+
+**Impact**
+- `/openapi/v1.json` is now a first-class local artifact for review and tooling.
+- `/docs` provides an interactive local reference without reintroducing the earlier Swagger-specific flow confusion.
+- Protected endpoints stay clearly documented through bearer-token descriptions and auth-related response metadata.
+
+**Rejected alternatives**
+- Reintroduce Swashbuckle: rejected because the repo already chose to avoid treating it as the long-term docs path.
+- Add a custom docs page instead of a standard UI: rejected because it would add maintenance without improving review value.
+
+---

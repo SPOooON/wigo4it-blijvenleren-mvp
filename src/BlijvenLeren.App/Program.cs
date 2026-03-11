@@ -6,6 +6,7 @@ using BlijvenLeren.App.Data;
 using BlijvenLeren.App.Data.Entities;
 using BlijvenLeren.App.Features.Comments;
 using BlijvenLeren.App.Features.LearningResources;
+using BlijvenLeren.App.OpenApi;
 using BlijvenLeren.App.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BlijvenLeren")));
 builder.Services.AddScoped<ClaimsPrincipalFactory>();
 builder.Services.AddScoped<DemoDataSeeder>();
+builder.Services.AddOpenApi(OpenApiDocumentConfiguration.Configure);
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddAuthentication(options =>
@@ -167,6 +170,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapOpenApi("/openapi/{documentName}.json");
+app.MapScalarApiReference(
+    "/docs",
+    options =>
+    {
+        options.Title = "BlijvenLeren API Docs";
+        options.OpenApiRoutePattern = "/openapi/{documentName}.json";
+    });
+
 app.MapGet(
     "/account/login",
     (string? returnUrl) =>
@@ -248,6 +260,7 @@ app.MapPost(
         return Results.Created($"/api/v1/learning-resources/{resource.Id}", LearningResourceContractMapper.ToDetailResponse(resource));
     })
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("Create a learning resource with MVP validation rules.");
 
 app.MapGet(
@@ -306,6 +319,7 @@ app.MapPost(
             LearningResourceContractMapper.ToCommentResponse(comment));
     })
     .RequireAuthorization()
+    .WithBearerAuthOpenApi("Requires a bearer token from the local Keycloak realm.")
     .WithSummary("Add a comment to a learning resource. Internal comments are auto-approved; external comments stay pending.");
 
 app.MapGet(
@@ -322,6 +336,7 @@ app.MapGet(
         return Results.Ok(comments.Select(LearningResourceContractMapper.ToPendingCommentResponse));
     })
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("List pending external comments for moderation.");
 
 app.MapPost(
@@ -357,6 +372,7 @@ app.MapPost(
         return Results.Ok(LearningResourceContractMapper.ToCommentResponse(comment));
     })
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("Approve or reject a pending external comment.");
 
 app.MapPut(
@@ -384,6 +400,7 @@ app.MapPut(
         return Results.Ok(LearningResourceContractMapper.ToDetailResponse(resource));
     })
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("Update a learning resource with MVP validation rules.");
 
 app.MapDelete(
@@ -404,6 +421,7 @@ app.MapDelete(
         return Results.NoContent();
     })
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("Delete a learning resource.");
 
 app.MapPost(
@@ -459,6 +477,7 @@ app.MapPost(
         return Results.Ok(result);
     })
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("Seed or reseed the demo dataset. Requires the internal-user role.");
 
 app.MapGet(
@@ -470,14 +489,17 @@ app.MapGet(
         roles = user.FindAll(ClaimTypes.Role).Select(claim => claim.Value).Distinct()
     }))
     .RequireAuthorization()
+    .WithBearerAuthOpenApi("Requires a bearer token from the local Keycloak realm.")
     .WithSummary("Return the current authenticated user and mapped roles.");
 
 app.MapGet("/api/auth/internal", () => Results.Ok(new { status = "ok", role = "internal-user" }))
     .RequireAuthorization("InternalUser")
+    .WithBearerAuthOpenApi("Requires an internal-user bearer token.")
     .WithSummary("Verify access for the internal-user role.");
 
 app.MapGet("/api/auth/external", () => Results.Ok(new { status = "ok", role = "external-contributor" }))
     .RequireAuthorization("ExternalContributor")
+    .WithBearerAuthOpenApi("Requires an external-contributor bearer token.")
     .WithSummary("Verify access for the external-contributor role.");
 
 app.MapStaticAssets();

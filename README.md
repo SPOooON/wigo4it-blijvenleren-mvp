@@ -108,6 +108,8 @@ Useful endpoints after startup:
 - app landing page: `http://localhost:8080/`
 - app health: `http://localhost:8080/api/health`
 - dependency probe: `http://localhost:8080/api/health/dependencies`
+- OpenAPI document: `http://localhost:8080/openapi/v1.json`
+- API docs UI: `http://localhost:8080/docs`
 - browser resource list: `http://localhost:8080/LearningResources`
 - browser resource details: `http://localhost:8080/LearningResources/{id}`
 - browser resource create route: `http://localhost:8080/LearningResources/Create`
@@ -190,6 +192,12 @@ Issue `#12` formalizes the MVP automated test suite:
 - the suite includes an explicit `BrowserSmoke` path for the main list-to-details journey
 - README and testing docs now describe the reproducible local test commands
 
+Issue `#20` adds local API docs:
+- the app now generates a built-in ASP.NET Core OpenAPI document at `/openapi/v1.json`
+- Scalar serves a separate interactive docs UI at `/docs`
+- protected API endpoints are annotated with bearer-token requirements and `401`/`403` response metadata
+- the local docs flow uses the same bearer tokens already documented for API testing
+
 ## Traceability summary
 
 Current implemented requirement coverage:
@@ -253,8 +261,9 @@ curl "http://localhost:8080/api/auth/me" -H "Authorization: Bearer <access_token
 ```
 
 API docs note:
-- interactive API docs are deferred to follow-up issue `#20`
-- for now, use the documented curl examples or your preferred HTTP client against the local endpoints
+- the built-in OpenAPI document is available at `http://localhost:8080/openapi/v1.json`
+- the interactive local docs UI is available at `http://localhost:8080/docs`
+- for protected endpoints, first obtain a bearer token from the local Keycloak realm, then use the docs UI auth panel or your preferred HTTP client
 
 Learning-resource create example:
 
