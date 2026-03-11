@@ -25,6 +25,8 @@ This MVP uses a local Keycloak instance to demonstrate authentication and role-b
 - Protected routes require authentication before access.
 - Role checks are enforced in the application for internal-only and external-only behavior.
 - API bearer tokens are validated against the local identity provider before protected API access is granted.
+- Browser create, edit, and delete routes for learning resources are restricted to the `internal-user` role.
+- API create, update, and delete routes for learning resources are restricted to the `internal-user` role.
 
 ## Deferred hardening
 

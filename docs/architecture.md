@@ -46,13 +46,20 @@ The runnable application code currently lives in:
 
 - `src/BlijvenLeren.App`: single ASP.NET Core Razor Pages application with minimal API endpoints
 - `BlijvenLeren.sln`: top-level solution file for local build and future expansion
-- `test/BlijvenLeren.App.Tests`: contract-mapping and validation tests for the MVP API baseline
+- `test/BlijvenLeren.App.Tests`: unit and integration tests for the current learning-resource slice
 
 Current bootstrap behavior:
 - `/` serves a placeholder browser page
 - `/api/health` serves a placeholder API health response
 
 This keeps the startup slice small while still demonstrating both browser and API access paths.
+
+Current CRUD behavior:
+- `/LearningResources` lists the seeded learning resources in the browser
+- `/LearningResources/Details/{id}` shows resource details and moderation-state comments
+- `/LearningResources/Create` and `/LearningResources/Edit/{id}` are restricted to internal users
+- `DELETE` browser behavior is triggered from the details page and enforced server-side
+- `/api/v1/learning-resources` now covers list, detail, create, update, and delete operations
 
 ## Data layer
 
@@ -111,10 +118,14 @@ The current authentication setup uses:
 
 Current protected boundaries:
 - `/protected` requires authentication
+- `/LearningResources/Create` requires the internal-user role
+- `/LearningResources/Edit/{id}` requires the internal-user role
+- delete behavior on `/LearningResources/Details/{id}` requires the internal-user role
 - `/api/demo/seed-data` requires the internal-user role
 - `/api/auth/internal` requires the internal-user role
 - `/api/auth/external` requires the external-contributor role
 - `/api/auth/me` accepts authenticated browser sessions or bearer tokens
+- `POST`, `PUT`, and `DELETE` on `/api/v1/learning-resources` require the internal-user role
 
 Flow notes:
 - browser requests challenge through the app and are redirected to Keycloak

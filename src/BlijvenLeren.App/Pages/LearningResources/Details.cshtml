@@ -1,0 +1,68 @@
+@page "{id:guid}"
+@model BlijvenLeren.App.Pages.LearningResources.DetailsModel
+@{
+    ViewData["Title"] = Model.Resource?.Title ?? "Learning resource";
+}
+
+@if (Model.Resource is null)
+{
+    <section class="py-4">
+        <div class="alert alert-warning" role="alert">Learning resource not found.</div>
+    </section>
+}
+else
+{
+    <section class="py-4">
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+            <div>
+                <h1 class="display-6 mb-2">@Model.Resource.Title</h1>
+                <p class="lead mb-2">@Model.Resource.Description</p>
+                <p class="mb-0">
+                    <a href="@Model.Resource.Url" target="_blank" rel="noreferrer">@Model.Resource.Url</a>
+                </p>
+            </div>
+            <span class="badge text-bg-light">@Model.Resource.CreatedUtc.ToString("yyyy-MM-dd")</span>
+        </div>
+
+        @if (Model.CanManageResources)
+        {
+            <div class="d-flex gap-2 mb-4">
+                <a class="btn btn-outline-primary" asp-page="/LearningResources/Edit" asp-route-id="@Model.Resource.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Resource.Id">
+                    <button class="btn btn-outline-danger" type="submit">Delete</button>
+                </form>
+            </div>
+        }
+
+        <h2 class="h4 mb-3">Comments</h2>
+        @if (Model.Resource.Comments.Count == 0)
+        {
+            <div class="alert alert-info" role="alert">No comments have been added yet.</div>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var comment in Model.Resource.Comments)
+                {
+                    <article class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                <strong>@comment.AuthorDisplayName</strong>
+                                <span class="text-muted">(@comment.AuthorType)</span>
+                            </div>
+                            <span class="badge text-bg-secondary">@comment.Status</span>
+                        </div>
+                        <p class="mt-2 mb-2">@comment.Body</p>
+                        <p class="mb-0 text-muted">
+                            Created @comment.CreatedUtc.ToString("yyyy-MM-dd HH:mm")
+                            @if (comment.ModeratedUtc is not null)
+                            {
+                                <span>| Moderated @comment.ModeratedUtc.Value.ToString("yyyy-MM-dd HH:mm")</span>
+                            }
+                        </p>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+}

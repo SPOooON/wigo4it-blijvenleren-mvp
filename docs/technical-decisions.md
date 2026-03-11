@@ -211,3 +211,21 @@ Issue `#8` needs a coherent model and contract baseline with validation, but a h
 - Introduce a richer DDD-style domain layer immediately: rejected because the current scope does not yet justify the extra abstraction.
 
 ---
+
+## TD-015 Implement the first CRUD slice through Razor Pages plus minimal APIs
+**Decision**
+Deliver the first learning-resource CRUD slice through the existing Razor Pages app and the versioned minimal API surface, with the same DbContext and validation rules underneath both.
+
+**Why**
+Issue `#9` requires both browser and API access, but the current MVP still favors one combined application over a split frontend/backend architecture. Reusing the same application slice keeps behavior reviewable and avoids inventing a second UI/API integration layer too early.
+
+**Impact**
+- Internal-user create, edit, and delete behavior is now available through both browser and API paths.
+- Validation and mapping stay centralized instead of diverging between UI and API handlers.
+- The browser UI remains intentionally simple server-rendered Razor Pages rather than a separate SPA.
+
+**Rejected alternatives**
+- Build a separate frontend client for CRUD now: rejected because it adds architecture that the sample scope does not require.
+- Implement only the API and defer browser CRUD: rejected because the issue explicitly requires both access paths.
+
+---
