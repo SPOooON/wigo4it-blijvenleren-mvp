@@ -24,7 +24,10 @@ public sealed class TestApplicationFactory : WebApplicationFactory<Program>
             configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Runtime:Database:ApplyMigrationsOnStartup"] = "false",
-                ["Runtime:Database:SeedDemoDataOnStartup"] = "false"
+                ["Runtime:Database:SeedDemoDataOnStartup"] = "false",
+                ["Runtime:Database:Host"] = "db",
+                ["Runtime:IdentityProvider:Authority"] = "http://idp:8080/realms/blijvenleren",
+                ["Authentication:Authority"] = "http://localhost:8081/realms/blijvenleren"
             });
         });
 
