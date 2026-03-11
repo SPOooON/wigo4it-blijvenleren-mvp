@@ -42,3 +42,9 @@
 - Add pagination, filtering, and sorting to the resource list in browser and API views.
 - Add optimistic concurrency handling for concurrent edits and deletes.
 - Add browser automation if the UI grows beyond the current server-rendered forms and navigation.
+
+## Deferred from issue #10
+
+- Add edit and delete behavior for comments once comment ownership UX is defined.
+- Add anti-spam or rate-limit controls for comment submission.
+- Add dedicated internal review screens for pending comments in issue `#11`.

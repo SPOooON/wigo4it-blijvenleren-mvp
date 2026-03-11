@@ -26,12 +26,9 @@ public sealed class LearningResourceContractMapperTests
 
         var response = LearningResourceContractMapper.ToDetailResponse(resource);
 
-        Assert.Equal(3, response.Comments.Count);
+        Assert.Single(response.Comments);
         Assert.Equal("First reviewer", response.Comments[0].AuthorDisplayName);
-        Assert.Equal("Second reviewer", response.Comments[1].AuthorDisplayName);
-        Assert.Equal("Third reviewer", response.Comments[2].AuthorDisplayName);
         Assert.Equal("Approved", response.Comments[0].Status);
-        Assert.Equal("External", response.Comments[1].AuthorType);
     }
 
     [Fact]
@@ -61,6 +58,7 @@ public sealed class LearningResourceContractMapperTests
                 {
                     Id = Guid.NewGuid(),
                     AuthorDisplayName = "Second reviewer",
+                    AuthorIdentityName = "second.reviewer",
                     AuthorType = CommentAuthorType.External,
                     Body = "Pending feedback",
                     Status = CommentStatus.Pending,
@@ -70,6 +68,7 @@ public sealed class LearningResourceContractMapperTests
                 {
                     Id = Guid.NewGuid(),
                     AuthorDisplayName = "First reviewer",
+                    AuthorIdentityName = "first.reviewer",
                     AuthorType = CommentAuthorType.Internal,
                     Body = "Approved feedback",
                     Status = CommentStatus.Approved,
@@ -80,6 +79,7 @@ public sealed class LearningResourceContractMapperTests
                 {
                     Id = Guid.NewGuid(),
                     AuthorDisplayName = "Third reviewer",
+                    AuthorIdentityName = "third.reviewer",
                     AuthorType = CommentAuthorType.External,
                     Body = "Rejected feedback",
                     Status = CommentStatus.Rejected,

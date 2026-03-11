@@ -8,6 +8,8 @@ public sealed class Comment
 
     public string AuthorDisplayName { get; set; } = string.Empty;
 
+    public string AuthorIdentityName { get; set; } = string.Empty;
+
     public CommentAuthorType AuthorType { get; set; }
 
     public string Body { get; set; } = string.Empty;

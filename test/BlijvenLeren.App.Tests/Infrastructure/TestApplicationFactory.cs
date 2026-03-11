@@ -61,10 +61,22 @@ public sealed class TestApplicationFactory : WebApplicationFactory<Program>
 
             using var scope = services.BuildServiceProvider().CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-            Seed(dbContext);
+            ResetDatabase(dbContext);
         });
+    }
+
+    public void ResetState()
+    {
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        ResetDatabase(dbContext);
+    }
+
+    private static void ResetDatabase(AppDbContext dbContext)
+    {
+        dbContext.Database.EnsureDeleted();
+        dbContext.Database.EnsureCreated();
+        Seed(dbContext);
     }
 
     private static void Seed(AppDbContext dbContext)
@@ -88,6 +100,7 @@ public sealed class TestApplicationFactory : WebApplicationFactory<Program>
                     {
                         Id = Guid.Parse("e2c7c846-36cf-4ac7-ae3d-34e98837031c"),
                         AuthorDisplayName = "Internal Reviewer",
+                        AuthorIdentityName = "internal.reviewer",
                         AuthorType = CommentAuthorType.Internal,
                         Body = "Good primer for the API-first part of the demo.",
                         Status = CommentStatus.Approved,
@@ -109,6 +122,7 @@ public sealed class TestApplicationFactory : WebApplicationFactory<Program>
                     {
                         Id = Guid.Parse("6b8b684d-a9d7-4b3f-8ebf-12d6736103f4"),
                         AuthorDisplayName = "External Contributor",
+                        AuthorIdentityName = "external.contributor",
                         AuthorType = CommentAuthorType.External,
                         Body = "Could be useful when the UI grows beyond simple forms.",
                         Status = CommentStatus.Pending,

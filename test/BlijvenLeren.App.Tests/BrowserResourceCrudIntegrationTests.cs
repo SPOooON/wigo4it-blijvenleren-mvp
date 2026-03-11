@@ -12,6 +12,7 @@ public sealed partial class BrowserResourceCrudIntegrationTests : IClassFixture<
     public BrowserResourceCrudIntegrationTests(TestApplicationFactory factory)
     {
         _factory = factory;
+        _factory.ResetState();
     }
 
     [Fact]
@@ -91,6 +92,64 @@ public sealed partial class BrowserResourceCrudIntegrationTests : IClassFixture<
 
         var deletedDetailsResponse = await client.GetAsync(updatedLocation);
         Assert.Equal(HttpStatusCode.NotFound, deletedDetailsResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task InternalUser_CanAddCommentThroughBrowserAndSeeItImmediately()
+    {
+        using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+        client.DefaultRequestHeaders.Add("X-Test-User", "internal.demo");
+        client.DefaultRequestHeaders.Add("X-Test-Roles", "internal-user");
+
+        var detailsGet = await client.GetAsync("/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+        var token = await ExtractRequestVerificationTokenAsync(detailsGet);
+
+        var commentResponse = await client.PostAsync(
+            "/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af?handler=Comment",
+            BuildFormContent(
+                token,
+                new Dictionary<string, string>
+                {
+                    ["CommentInput.Body"] = "Internal browser comment"
+                }));
+
+        Assert.Equal(HttpStatusCode.Redirect, commentResponse.StatusCode);
+
+        var updatedDetails = await client.GetAsync("/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+        var html = await updatedDetails.Content.ReadAsStringAsync();
+        Assert.Contains("Internal browser comment", html);
+    }
+
+    [Fact]
+    public async Task ExternalUser_CanSubmitCommentThroughBrowserButDoesNotSeeItImmediately()
+    {
+        using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+        client.DefaultRequestHeaders.Add("X-Test-User", "external.demo");
+        client.DefaultRequestHeaders.Add("X-Test-Roles", "external-contributor");
+
+        var detailsGet = await client.GetAsync("/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+        var token = await ExtractRequestVerificationTokenAsync(detailsGet);
+
+        var commentResponse = await client.PostAsync(
+            "/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af?handler=Comment",
+            BuildFormContent(
+                token,
+                new Dictionary<string, string>
+                {
+                    ["CommentInput.Body"] = "External browser comment"
+                }));
+
+        Assert.Equal(HttpStatusCode.Redirect, commentResponse.StatusCode);
+
+        var updatedDetails = await client.GetAsync("/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+        var html = await updatedDetails.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("External browser comment", html);
     }
 
     private static FormUrlEncodedContent BuildFormContent(string requestVerificationToken, Dictionary<string, string> fields)

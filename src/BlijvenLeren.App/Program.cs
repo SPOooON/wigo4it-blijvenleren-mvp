@@ -4,6 +4,7 @@ using BlijvenLeren.App.Configuration;
 using BlijvenLeren.App.Contracts.V1;
 using BlijvenLeren.App.Data;
 using BlijvenLeren.App.Data.Entities;
+using BlijvenLeren.App.Features.Comments;
 using BlijvenLeren.App.Features.LearningResources;
 using BlijvenLeren.App.Security;
 using Microsoft.AspNetCore.Authentication;
@@ -277,6 +278,35 @@ app.MapGet(
             : Results.Ok(LearningResourceContractMapper.ToDetailResponse(resource));
     })
     .WithSummary("Get one learning resource with its comments using the versioned API contract.");
+
+app.MapPost(
+    "/api/v1/learning-resources/{id:guid}/comments",
+    async (Guid id, CreateCommentRequest request, ClaimsPrincipal user, AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var errors = CommentRequestValidator.Validate(request);
+        if (errors.Count > 0)
+        {
+            return Results.ValidationProblem(errors);
+        }
+
+        var resourceExists = await dbContext.LearningResources
+            .AnyAsync(learningResource => learningResource.Id == id, cancellationToken);
+
+        if (!resourceExists)
+        {
+            return Results.NotFound();
+        }
+
+        var comment = CommentSubmissionFactory.Create(id, user, request, DateTimeOffset.UtcNow);
+        dbContext.Comments.Add(comment);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Created(
+            $"/api/v1/learning-resources/{id}",
+            LearningResourceContractMapper.ToCommentResponse(comment));
+    })
+    .RequireAuthorization()
+    .WithSummary("Add a comment to a learning resource. Internal comments are auto-approved; external comments stay pending.");
 
 app.MapPut(
     "/api/v1/learning-resources/{id:guid}",

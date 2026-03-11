@@ -27,6 +27,8 @@ This MVP uses a local Keycloak instance to demonstrate authentication and role-b
 - API bearer tokens are validated against the local identity provider before protected API access is granted.
 - Browser create, edit, and delete routes for learning resources are restricted to the `internal-user` role.
 - API create, update, and delete routes for learning resources are restricted to the `internal-user` role.
+- Comment submission requires an authenticated browser session or bearer token.
+- External comments are stored as pending instead of being published immediately in the normal resource views.
 
 ## Deferred hardening
 

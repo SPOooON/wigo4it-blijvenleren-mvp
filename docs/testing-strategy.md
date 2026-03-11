@@ -26,6 +26,13 @@ Issue `#9` coverage:
 - seeded browser list rendering
 - internal-user create, edit, and delete browser happy paths through Razor Pages forms
 
+Issue `#10` coverage:
+- comment request validation
+- internal-user API comments becoming visible immediately
+- external-user API comments being stored as pending and hidden from normal detail reads
+- internal-user browser comment submission showing the new comment immediately
+- external-user browser comment submission succeeding without surfacing the pending comment yet
+
 ## Deliberate limits
 
 - The integration tests replace PostgreSQL with EF Core InMemory, so they verify application behavior rather than provider-specific SQL behavior.
