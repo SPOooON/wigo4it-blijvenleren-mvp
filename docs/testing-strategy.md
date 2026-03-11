@@ -7,6 +7,8 @@ The MVP currently uses automated tests at two levels:
 - focused unit tests for learning-resource contract mapping and request validation
 - integration tests for the first CRUD vertical slice across both API and browser routes
 
+Issue `#12` keeps that structure intentionally small rather than introducing a separate browser-automation stack.
+
 ## Test stack
 
 - `xUnit` for the test runner
@@ -39,10 +41,16 @@ Issue `#11` coverage:
 - invalid moderation attempts against non-pending or internal comments
 - internal-user browser moderation flow approving a pending comment and making it visible in the normal detail page
 
+Issue `#12` suite formalization:
+- the `BrowserSmoke` test trait marks the smallest review-friendly end-to-end Razor Pages path
+- `dotnet test BlijvenLeren.sln -c Release` runs the full suite reproducibly
+- `dotnet test test/BlijvenLeren.App.Tests/BlijvenLeren.App.Tests.csproj -c Release --filter FullyQualifiedName~BrowserSmoke` runs only the smoke path
+
 ## Deliberate limits
 
 - The integration tests replace PostgreSQL with EF Core InMemory, so they verify application behavior rather than provider-specific SQL behavior.
 - The browser coverage is server-rendered Razor Pages exercised through HTTP, not full browser automation.
+- This repo intentionally does not add a second UI-test framework yet because the current UI is still simple server-rendered pages and the assignment favors pragmatic scope.
 - The OIDC login redirect against local Keycloak is not part of the automated suite yet; it is still verified manually in the compose runtime.
 
 ## Follow-up direction

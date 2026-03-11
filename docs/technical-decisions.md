@@ -265,3 +265,21 @@ Issue `#11` requires review and moderation flows, but the MVP still needs a simp
 - Allow moderation from multiple ad hoc pages first: rejected because it spreads security-sensitive state transitions across the UI too early.
 
 ---
+
+## TD-018 Keep the MVP automated suite in one test project and treat browser checks as smoke tests
+**Decision**
+Keep the current automated suite in the existing test project and use HTTP-driven Razor Pages checks for the browser smoke path instead of adding a separate UI automation stack.
+
+**Why**
+Issue `#12` asks for reliable automated checks without overbuilding infrastructure. The repo already has meaningful unit and integration coverage, and the current UI is still simple server-rendered pages. Adding a second browser-specific toolchain now would overlap with that coverage more than it would increase confidence.
+
+**Impact**
+- `dotnet test BlijvenLeren.sln -c Release` stays the single reproducible test command.
+- The suite still covers browser-facing flows, but with pragmatic in-process hosting rather than heavyweight browser automation.
+- A later move to dedicated UI automation remains available if the frontend becomes more interactive.
+
+**Rejected alternatives**
+- Add Playwright immediately for the MVP smoke path: rejected because it adds setup and maintenance overhead without enough extra signal at the current UI complexity.
+- Split unit, integration, and browser checks into multiple test projects now: rejected because the current test volume does not justify the extra project structure.
+
+---

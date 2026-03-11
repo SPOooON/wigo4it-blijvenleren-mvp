@@ -65,6 +65,25 @@ You can also build the current solution with:
 dotnet build BlijvenLeren.sln
 ```
 
+### Run tests
+
+Run the full automated suite:
+
+```bash
+dotnet test BlijvenLeren.sln -c Release
+```
+
+Run the browser smoke path only:
+
+```bash
+dotnet test test/BlijvenLeren.App.Tests/BlijvenLeren.App.Tests.csproj -c Release --filter FullyQualifiedName~BrowserSmoke
+```
+
+Current scope:
+- unit tests cover request validation and contract-mapping rules
+- integration tests cover the main API and Razor Pages flows against an in-memory app host
+- the browser smoke path verifies the main list-to-details Razor Pages journey without adding a separate browser-automation stack
+
 ### Run the container runtime
 
 ```bash
@@ -156,6 +175,11 @@ Issue `#11` adds the moderation workflow:
 - pending external comments can be approved or rejected with server-side transition rules
 - approved external comments become visible in the normal resource detail views
 - rejected external comments remain hidden from the normal resource detail views
+
+Issue `#12` formalizes the MVP automated test suite:
+- one test project now covers validation, mapping, API integration, and browser-facing Razor Pages checks
+- the suite includes an explicit `BrowserSmoke` path for the main list-to-details journey
+- README and testing docs now describe the reproducible local test commands
 
 ### Database migration workflow
 

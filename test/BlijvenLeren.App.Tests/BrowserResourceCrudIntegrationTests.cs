@@ -16,16 +16,22 @@ public sealed partial class BrowserResourceCrudIntegrationTests : IClassFixture<
     }
 
     [Fact]
-    public async Task ListingPage_RendersSeededResources()
+    [Trait("Category", "BrowserSmoke")]
+    public async Task BrowserSmoke_List_To_Details_Path_RendersSeededContent()
     {
         using var client = _factory.CreateClient();
 
-        var response = await client.GetAsync("/LearningResources");
-        var html = await response.Content.ReadAsStringAsync();
+        var listResponse = await client.GetAsync("/LearningResources");
+        var listHtml = await listResponse.Content.ReadAsStringAsync();
+        var detailsResponse = await client.GetAsync("/LearningResources/Details/901a31cc-3ec7-4e8b-93cb-9cb6c49054af");
+        var detailsHtml = await detailsResponse.Content.ReadAsStringAsync();
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("API Design Basics", html);
-        Assert.Contains("Browser Accessibility Checklist", html);
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, detailsResponse.StatusCode);
+        Assert.Contains("API Design Basics", listHtml);
+        Assert.Contains("Browser Accessibility Checklist", listHtml);
+        Assert.Contains("API Design Basics", detailsHtml);
+        Assert.Contains("Good primer for the API-first part of the demo.", detailsHtml);
     }
 
     [Fact]
