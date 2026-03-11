@@ -20,6 +20,7 @@ The original brief is intentionally open-ended and expects pragmatic choices rat
 ## Review guide
 
 If you want the fastest walkthrough of what is built versus deferred, start here:
+- [Reviewer walkthrough](docs/reviewer-walkthrough.md) for a short guided demo path through the MVP
 - [Functional requirements](docs/functional-requirements.md) for requirement-to-implementation traceability
 - [Architecture](docs/architecture.md) for the current runtime, auth, and moderation design
 - [Testing strategy](docs/testing-strategy.md) for what is covered automatically and what is still manual
@@ -100,6 +101,8 @@ Current scope:
 ```bash
 docker compose up --build
 ```
+
+If you want a compact guided demo after startup, use the [reviewer walkthrough](docs/reviewer-walkthrough.md).
 
 Container ports:
 - app: `http://localhost:8080`
