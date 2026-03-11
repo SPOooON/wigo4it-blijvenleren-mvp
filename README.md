@@ -86,6 +86,9 @@ Run the full automated suite:
 dotnet test BlijvenLeren.sln -c Release
 ```
 
+Hosted validation:
+- GitHub Actions runs the same Release build-and-test path for pull requests and pushes to `main`
+
 Run the browser smoke path only:
 
 ```bash
@@ -96,6 +99,7 @@ Current scope:
 - unit tests cover request validation and contract-mapping rules
 - integration tests cover the main API and Razor Pages flows against an in-memory app host
 - the browser smoke path verifies the main list-to-details Razor Pages journey without adding a separate browser-automation stack
+- pull requests now get a hosted GitHub Actions build-and-test check using the same main command path
 
 ### Run the container runtime
 

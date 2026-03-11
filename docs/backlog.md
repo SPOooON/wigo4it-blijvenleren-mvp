@@ -11,7 +11,7 @@ Reading guide:
 
 - Split browser UI and API into separate projects if later scope, hosting or team boundaries justify it.
 - Add a shared contracts project if DTO reuse starts to create coupling or duplication.
-- Add coding standards enforcement such as `.editorconfig` and CI validation once the codebase has more than the initial bootstrap slice.
+- Add coding standards enforcement such as `.editorconfig` once the codebase needs stricter style automation.
 Impact:
 The current repo favors one combined app and lightweight project structure over earlier separation.
 
@@ -84,7 +84,6 @@ Moderation decisions are enforceable, but not yet optimized for higher-volume re
 
 ## Deferred from issue #12
 
-- Add CI workflow or GitHub PR checks for automatic execution outside local development.
 - Add more failure-path coverage if business rules become more complex.
 Impact:
-The automated suite is reproducible locally, but not yet enforced in hosted automation.
+The automated suite is reproducible locally and now runs in hosted CI, but deeper negative-path coverage is still limited.
