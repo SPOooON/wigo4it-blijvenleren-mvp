@@ -82,6 +82,26 @@ When implementing a feature:
 - Summaries should explain both the change and the reason.
 - For demonstration, open a GitHub pull request for each feature branch so reviewers can inspect the change set and rationale.
 
+## Work management
+
+Work should be tracked through GitHub issues.
+
+When starting work:
+1. Pick an open issue.
+2. If the issue is unclear, incomplete, or contains conflicting requirements, ask clarifying questions **in the issue comments before starting implementation**.
+3. Wait for clarification before proceeding if the missing information could affect the design or implementation.
+4. Once the issue is sufficiently clear, create a feature branch.
+5. Implement the task.
+6. Open a pull request referencing the issue.
+
+### Clarifications
+
+If requirements or scope are unclear:
+
+- Ask questions in the **issue comments**, not in pull requests.
+- Keep questions concrete and actionable.
+- Do not guess architectural decisions if they are not documented.
+
 ## Definition of done for a task
 
 A task is only done when:
