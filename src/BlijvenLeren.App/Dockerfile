@@ -1,9 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY BlijvenLeren.sln ./
 COPY src/BlijvenLeren.App/BlijvenLeren.App.csproj src/BlijvenLeren.App/
-RUN dotnet restore BlijvenLeren.sln
+RUN dotnet restore src/BlijvenLeren.App/BlijvenLeren.App.csproj
 
 COPY src/BlijvenLeren.App/. ./src/BlijvenLeren.App/
 RUN dotnet publish src/BlijvenLeren.App/BlijvenLeren.App.csproj -c Release -o /app/publish /p:UseAppHost=false

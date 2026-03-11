@@ -46,6 +46,7 @@ The runnable application code currently lives in:
 
 - `src/BlijvenLeren.App`: single ASP.NET Core Razor Pages application with minimal API endpoints
 - `BlijvenLeren.sln`: top-level solution file for local build and future expansion
+- `test/BlijvenLeren.App.Tests`: contract-mapping and validation tests for the MVP API baseline
 
 Current bootstrap behavior:
 - `/` serves a placeholder browser page
@@ -68,6 +69,17 @@ Schema notes:
 - comment moderation is stored explicitly as `Pending`, `Approved`, or `Rejected`
 - comment author type is stored explicitly as `Internal` or `External`
 - the first index targets `(LearningResourceId, Status)` to support resource detail and moderation queries
+
+## Domain and contract baseline
+
+The current domain/API baseline intentionally keeps modeling straightforward:
+
+- EF Core entities remain the current domain model for the MVP
+- versioned transport contracts live separately under `Contracts/V1`
+- mapping and validation live in `Features/LearningResources`
+- the first versioned API slice covers list, detail, and create behavior for learning resources
+
+This keeps the current layer count low while still separating persistence entities from external request/response contracts.
 
 ## Demo data
 

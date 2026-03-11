@@ -30,3 +30,9 @@
 - Tighten token validation and cookie settings for production-like environments.
 - Move committed demo credentials and realm provisioning out of the default runtime for non-demo environments.
 - Add built-in OpenAPI generation and a local interactive API docs UI in issue `#20`.
+
+## Deferred from issue #8
+
+- Add update/delete contracts and handlers once the internal CRUD workflow is implemented.
+- Add explicit API versioning strategy documentation once there is more than one versioned slice.
+- Revisit whether the current EF-entity-as-domain baseline should be split further once business rules become richer.
