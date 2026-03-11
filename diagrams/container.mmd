@@ -4,14 +4,11 @@ flowchart TB
     end
 
     subgraph runtime["Local Container Runtime (docker compose)"]
-        web[web - Frontend]
-        api[api - Backend HTTP API]
+        app[app - Browser UI + HTTP API]
         idp[idp - Authentication Provider]
         db[(db - Relational Database)]
     end
 
-    browser -->|HTTPS| web
-    web -->|HTTP API calls| api
-    web -->|Login / callback| idp
-    api -->|Token validation / user info| idp
-    api -->|SQL| db
+    browser -->|HTTP :8080| app
+    app -->|Token validation / user info| idp
+    app -->|SQL| db

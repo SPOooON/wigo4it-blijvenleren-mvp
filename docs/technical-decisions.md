@@ -118,3 +118,21 @@ Issue `#4` needs a runnable skeleton, but a separate web and API project split a
 
 **Rejected alternatives**
 - Start with separate web and API projects immediately: rejected because it adds structure before there is enough behavior to justify it in this MVP.
+
+---
+
+## TD-010 Use Docker Compose with app, db and idp services for local runtime
+**Decision**
+Use `compose.yaml` to run the MVP locally with three services: `app`, `db`, and `idp`.
+
+**Why**
+The repository needs a single-command runtime that reflects the documented container architecture, but the current codebase only has one combined ASP.NET Core application rather than separate web and API deployables.
+
+**Impact**
+- Local reviewers can start the runtime with one Docker Compose command.
+- The runtime includes the infrastructure services needed for upcoming persistence and authentication work.
+- The compose topology intentionally differs from the older `web`/`api` wording and must stay documented as an MVP simplification.
+
+**Rejected alternatives**
+- Force separate `web` and `api` containers immediately: rejected because the codebase still ships one application artifact.
+- Delay container runtime work until persistence and authentication are implemented: rejected because local reproducibility is a stated architecture goal.

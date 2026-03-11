@@ -42,7 +42,7 @@ See `docs/scope-and-assumptions.md` for details.
 ### Prerequisites
 
 - .NET SDK 10
-- Docker Desktop for later container/runtime work
+- Docker Desktop
 
 ### Run locally
 
@@ -60,6 +60,23 @@ You can also build the current solution with:
 dotnet build BlijvenLeren.sln
 ```
 
+### Run the container runtime
+
+```bash
+docker compose up --build
+```
+
+Container ports:
+- app: `http://localhost:8080`
+- db: `localhost:5432`
+- idp: `http://localhost:8081`
+
+Useful endpoints after startup:
+- app landing page: `http://localhost:8080/`
+- app health: `http://localhost:8080/api/health`
+- dependency probe: `http://localhost:8080/api/health/dependencies`
+- Keycloak admin console: `http://localhost:8081/` with `admin` / `admin`
+
 ## Current bootstrap scope
 
 Issue `#4` establishes a runnable starting point rather than full feature coverage. The current implementation:
@@ -67,6 +84,18 @@ Issue `#4` establishes a runnable starting point rather than full feature covera
 - provides a placeholder landing page for the browser experience
 - exposes a placeholder health endpoint for API connectivity checks
 - intentionally leaves domain logic, persistence, authentication and containers for follow-up issues
+
+Issue `#5` adds the first container runtime around that bootstrap:
+- `app` hosts both the browser UI and the API surface
+- `db` provides a PostgreSQL instance for later persistence work
+- `idp` provides a local Keycloak instance for later authentication work
+- the application exposes a dependency probe so container-network reachability is visible during review
+
+### Container troubleshooting
+
+- If `docker compose up --build` fails on image pulls, retry after Docker Desktop finishes starting and registry access is available.
+- If port `8080`, `8081`, or `5432` is already in use, stop the conflicting service or change the port mapping in `compose.yaml`.
+- If the app starts before `db` or `idp` is fully ready, refresh `http://localhost:8080/api/health/dependencies` after a few seconds. Full healthchecks are deferred follow-up work.
 
 ## Why Terraform is not included in this MVP
 
